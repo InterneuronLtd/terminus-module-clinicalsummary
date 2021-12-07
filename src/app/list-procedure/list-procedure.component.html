@@ -1,0 +1,101 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+    <div class="card-img-top bg-secondary text-white">
+      <div class="row">
+        <div class="col-md-9">
+          <h5 style="margin-left: 10px;">
+            Procedures
+          </h5>
+
+        </div>
+        <div class="col-md-3">
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+        <div>
+          <div class="table-responsive">
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-sm btn-default text-white " (click)="addProcedure()"  *ngIf="appService.AuthoriseAction('Edit Clinical Summary')">
+                    <!-- <i class="fa fa-plus"></i> -->
+                    <img src="assets/images/clinicalsummary/addicon.svg">
+                </button>
+              </div>
+
+              <!-- <div class="col-md-6">
+                    <select name="status" id="status" class="form-control" (change)="selectChange($event,3)">
+                      <option value="">Select Status</option>
+                      <option *ngFor="let opt of procedureStatusList"
+                        value="{{ opt.code }}">
+                        {{ opt.code }}
+                      </option>
+                    </select>
+              </div> -->
+            </div>
+
+            <br>
+            <p-table #dt1 [value]="procedureList" styleClass="p-datatable-gridlines p-datatable-sm" responsiveLayout="scroll" [globalFilterFields]="['status']">
+              
+              <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 10%;">Code</th>    
+                    <th>Name</th>    
+                    <th style="width: 12%;" pSortableColumn="proceduredate">Procedure Date <p-sortIcon field="onsetdate"></p-sortIcon></th>  
+                    <th>
+                      Status
+                      <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                        <ng-template pTemplate="filter" let-code let-filter="filterCallback">
+                            <p-dropdown optionLabel="code" optionValue="code" [ngModel]="code" [options]="procedureStatusList" (onChange)="filter($event.value)" placeholder="Please select" [showClear]="true">
+                                <ng-template let-option pTemplate="item">
+                                    <span>{{option.code}}</span>
+                                </ng-template>
+                            </p-dropdown>
+                        </ng-template>
+                    </p-columnFilter>
+                    </th>    
+                    <th style="width: 12%;">Performed By</th>    
+                    <!-- <th>Recorded By</th>     -->
+                    <th style="width: 8%;">Actions</th>  
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-procedure_list>
+                  <tr>
+                    <td style="width: 10%;">{{procedure_list.code}}</td>    
+                    <td>{{procedure_list.name}}</td>    
+                    <td style="width: 12%;">{{procedure_list.proceduredate | date :'dd/MM/yyyy'}}</td>    
+                    <td>{{procedure_list.status}}</td>    
+                    <td style="width: 12%;">{{procedure_list.performedby}}</td>    
+                    <!-- <td>{{procedure_list.recordedby}}</td>     -->
+                    <td style="width: 8%;">
+                      <a  *ngIf="appService.AuthoriseAction('Edit Clinical Summary')" href="javascript:void(0)" (click)="editProcedure(procedure_list.procedure_id)"><img src="assets/images/clinicalsummary/editIcon.svg"></a>&nbsp;
+                      <a href="javascript:void(0)" (click)="viewHistory(procedure_list.procedure_id)"><img src="assets/images/clinicalsummary/history.svg"></a>
+                    </td>   
+                  </tr>
+              </ng-template>
+          </p-table>
+          </div>
+        </div>
+  
+      </div>
+</div>

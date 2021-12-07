@@ -1,0 +1,258 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<!-- <div>
+
+    <div>
+      <ul class="list-group">
+        <li class="list-group-item list-group-item-action">
+          <div style="padding:5px;">
+            <div class="row">
+              <div class="col-md-6">
+                lastupdatedrecorddatetime
+              </div>
+              <div class="col-md-5">
+                <span > createdby </span>
+                <span > Dev User </span>
+              </div>
+              <div class="col-md-1" style="padding-top:2px;">
+                <span class="float-right text-dark">
+                  
+                </span>
+              </div>
+            </div>
+          </div>
+
+
+
+        </li>
+      </ul>
+    </div>
+  </div> -->
+
+  <div class="modal-header bg-info text-white">
+    <h5 class="modal-title">
+     {{title}}
+    </h5>
+  
+    <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
+      <!-- <span aria-hidden="true">&times;</span> -->
+      <img src="assets/images/clinicalsummary/closeIcon.svg">
+    </button>
+  </div>
+  <div class="modal-body">
+    <span class="text-dark">
+      <div>
+        <div class="card">
+          <div class="card-body">
+              <div *ngIf="!diagnosisId">
+                <label for="diagnosis">Select Diagnosis:</label>
+                <p-autoComplete [suggestions]="results" (completeMethod)="search($event)"
+                [multiple]="false" [forceSelection]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                [(ngModel)]="diagnosis.diagnosistext" (onSelect)="selectedValue($event)" (onUnselect)="unSelectedValue($event)" [minLength]="3"
+                #autocomplete  field="_term">
+                <ng-template let-diagnosis pTemplate="item">
+                  <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                    <div style="font-size:14px;margin:10px 10px 0 0">{{ diagnosis.term }}</div>
+                    <div style="font-size:14px;margin:10px 10px 0 0">{{ diagnosis.code }}</div>
+                  </div>
+                </ng-template>
+                </p-autoComplete>
+                <!-- <div [hidden]="diagnosistext.valid" class="text-danger">
+                  <i>Please select diagnosis.</i>
+                </div> -->
+              </div>
+
+              <div class="h6" *ngIf="diagnosisId">
+  
+                <div class='border rounded bg-info text-white' style="padding: 5px; font-weight: bold;">
+                  {{diagnosisName}}
+                </div>
+              </div>
+
+              <hr *ngIf="showDiagnosisForm">
+  
+              <div class="row" *ngIf="showDiagnosisForm">
+                <div class="col-md-12">
+                  <!-- Content goes here  -->
+                  <form #addDiagnosisForm="ngForm" autocomplete="off">
+
+                    <div class="form-group">
+                      <label for="onsetdate">Onset Date:</label>
+                      <div class="input-group">
+                        <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker required
+                          [maxDate]="maxDateValue" id="onsetdate" name="onsetdate"  [(ngModel)]="diagnosis.onsetdate" #onsetdate="ngModel"
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY' , containerClass: 'theme-default', adaptivePosition: true}" aria-describedby="onsetdate" 
+                          [ngClass]="{ 'is-invalid': onsetdate.invalid }" (keydown)="false">
+                      </div>
+                      <div [hidden]="onsetdate.valid" class="text-danger">
+                        <i>Onset Date is required</i>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+      
+                        <div class="form-group">
+                            <label for="isdateapproximate">Is date approximate?</label><br>
+                            <input type="radio" name="isdateapproximate" value="Yes" [(ngModel)]="diagnosis.isdateapproximate" #isdateapproximate="ngModel" (change)="selectApproximateDate()">&nbsp; 
+                            <label for="isdateapproximate" class="form-check-label">Yes</label>&nbsp;
+                            <input type="radio" name="isdateapproximate" value="No" [(ngModel)]="diagnosis.isdateapproximate" #isdateapproximate="ngModel" (change)="selectApproximateDate()">&nbsp;
+                            <label for="isdateapproximate" class="form-check-label">No</label>
+                        </div>
+      
+                      </div>
+                      <div class="col-md-6" *ngIf="showDateEffectivePeriod">
+      
+                        <div class="form-group">
+                          <label for="dateeffectiveperiod">Effective Period</label><br>
+                          <input type="radio" name="dateeffectiveperiod" value="Month" [(ngModel)]="diagnosis.dateeffectiveperiod" #dateeffectiveperiod="ngModel" (change)="selectEffectivePeriod()">&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Month</label>&nbsp;
+                          <input type="radio" name="dateeffectiveperiod" value="Year" [(ngModel)]="diagnosis.dateeffectiveperiod" #dateeffectiveperiod="ngModel" (change)="selectEffectivePeriod()">&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Year</label>&nbsp;
+                        </div>   
+                      </div>
+                      
+                    </div>
+
+                    <div class="form-group" *ngIf="showDatePicker">
+                      <div class="input-group">
+                          <input [(ngModel)]="diagnosis.onsetdate" #effectivedatestring="ngModel" autocomplete="off" class="form-control" name="date" 
+                          bsDatepicker [bsConfig]="bsConfig" [maxDate]="maxDateValue" readonly>
+                      </div>
+
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-6">
+      
+                        <div class="form-group">
+                            <label for="clinicalstatus">Clinical Status:</label>
+                            <select name="clinicalstatus" id="clinicalstatus" class="form-control"
+                              [(ngModel)]="diagnosis.clinicalstatus" required #clinicalstatus="ngModel"
+                               [ngClass]="{ 'is-invalid': clinicalstatus.invalid }">
+                                <option value="">Please select</option>
+                                <option *ngFor="let opt of clinicalStatusList" value="{{ opt.code }}">
+                                  {{ opt.code }}
+                                </option>
+                            </select>
+                            <div [hidden]="clinicalstatus.valid" class="text-danger">
+                              <i>Clinical Status is required</i>
+                            </div>
+                        </div>
+      
+                      </div>
+                      <div class="col-md-6">
+      
+                        <div class="form-group">
+                          <label for="verificationstatus">Verification Status:</label>
+                          <select name="verificationstatus" id="verificationstatus" class="form-control"
+                            [(ngModel)]="diagnosis.verificationstatus" required #verificationstatus="ngModel"
+                            [ngClass]="{ 'is-invalid': verificationstatus.invalid}">
+                            <option value="">Please select</option>
+                            <option *ngFor="let opt of verificationStatusList"
+                              value="{{ opt.code }}">
+                              {{ opt.code }}
+                            </option>
+                          </select>
+                          <div [hidden]="verificationstatus.valid" class="text-danger">
+                            <i>Verification Status is required</i>
+                          </div>
+                        </div>    
+                      </div>
+                      
+                    </div>
+
+                    <div class="form-group">
+                      <label for="onsetdate">Resolved Date:</label>
+                      <div class="input-group">
+                        <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker required
+                          [maxDate]="maxDateValue" id="resolveddate" name="resolveddate" [(ngModel)]="diagnosis.resolveddate" #resolveddate="ngModel"
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true }" aria-describedby="enddate" (keydown)="false">
+                      </div>
+                    </div>
+      
+                    <!-- <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="recordedby">Recorded By:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{diagnosis._createdby}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Recorded Date/Time:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{diagnosis._createddate | date:'dd/MM/yyyy HH:mma'}}
+                          </span>
+                        </div>
+                      </div>
+                    </div> -->
+      
+                    <!-- <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Recorded Date/Time:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{diagnosis._createddate | date:'dd/MM/yyyy HH:mma'}}
+                          </span>
+                        </div>
+                      </div>
+                    </div> -->
+      
+                    <hr />
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <button class="btn btn-secondary text-white btn-block" 
+                            (click)="dismiss()">
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <button *ngIf="!diagnosisId" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addDiagnosisForm.form.valid" (click)="addDiagnosis()">
+                                Save
+                            </button>
+
+                            <button *ngIf="diagnosisId" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addDiagnosisForm.form.valid" (click)="editDiagnosis()">
+                                Save
+                            </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </form>
+                  <!-- Content ends here -->
+                </div>
+              </div> 
+          </div>  
+        </div>
+  
+      </div>
+  
+    </span>
+  </div>

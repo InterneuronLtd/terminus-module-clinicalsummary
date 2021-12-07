@@ -1,0 +1,12 @@
+{
+    "uris": {
+      "baseuri": "SYNAPSE_DYNAMIC_URI",
+      "carerecorduri":"CARERECORD_URI",
+      "terminologyuri": "TERMINOLOGY_URI/api/Terminology/searchsnomed/VALUE",
+      "fishbonedata":[
+        [ "WBC", "RBC", "PLATELET", "HB", "EOSINOPHIL", "BASOPHIL", "NEUTROPHIL", "MCV", "MCH" ],
+        [ "CALCIUM", "UREA", "SODIUM_Level", "POTASSIUM_LEVEL" ]
+      ]
+    },
+    "enablelogging": true
+ }

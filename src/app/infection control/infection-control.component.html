@@ -1,0 +1,418 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+    <div class="card-img-topbg-secondary text-white">
+      <div class="row">
+        <div class="col-md-9">
+          <h5 style="margin-left: 10px;">
+            Infection Control
+          </h5>
+
+        </div>
+        <div class="col-md-3">
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+        <div>
+          <div >
+            <div>
+
+              <div>
+                <ul class="list-group" >
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-2" >
+                        <div>
+                          <strong class="text-secondary">Name</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4" >
+                        <div>
+                          <strong class="text-secondary">Value</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <strong class="text-secondary">Unit</strong>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <strong class="text-secondary">Abnormal Flag</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <strong class="text-secondary">Recorded Date/Time</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <strong class="text-secondary">Status</strong>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+  
+              <div *ngIf="observationSet?.length > 0">
+                <ul class="list-group"  *ngFor="let obs of observationSet">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-2" >
+                        <div>
+                          <!-- <strong class="text-secondary">Name</strong> -->
+                          <span style="font-size: 15px;">
+                            {{obs.name}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4" >
+                        <div>
+                          <!-- <strong class="text-secondary">Value</strong> -->
+                          <span style="font-size: 15px;">
+                            {{obs.value}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <!-- <strong class="text-secondary">Unit</strong> -->
+                        <span style="font-size: 15px;" *ngIf="obs.name == 'Heart Rate'">
+                          {{obs.units?obs.units: 'BPM'}}
+                        </span>
+                        <span style="font-size: 15px;" *ngIf="obs.name == 'Temperature'">
+                          {{obs.units?obs.units: '°C'}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Abnormal Flag</strong> -->
+                          <span style="font-size: 15px;">
+                            {{obs.units}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Recorded Date/Time</strong> -->
+                          <span style="font-size: 15px;">
+                            {{obs.formattedtimerecorded}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <!-- <strong class="text-secondary">Status</strong> -->
+                          <span style="font-size: 15px;">
+                            {{obs.units}}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="crpSet?.length > 0">
+                <ul class="list-group"  *ngFor="let crp of crpSet">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Name</strong> -->
+                          <span style="font-size: 15px;">
+                            {{crp.observationidentifiertext}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <!-- <strong class="text-secondary">Value</strong> -->
+                        <span style="font-size: 15px;">
+                          {{crp.observationvalue}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-1" >
+                        <div>
+                          <!-- <strong class="text-secondary">Unit</strong> -->
+                          <span style="font-size: 15px;">
+                            {{crp.unitstext}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Abnormal Flag</strong> -->
+                          <span style="font-size: 15px;">
+                            {{crp.abnormalflag}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <!-- <strong class="text-secondary">Observation Date/Time</strong> -->
+                        <span style="font-size: 15px;">
+                          {{crp.formattedobservationdatetime}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <!-- <strong class="text-secondary">Status</strong> -->
+                          <span style="font-size: 15px;">
+                            {{crp.status}}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="microbiologyReportSet?.length > 0">
+                <ul class="list-group"  *ngFor="let mbr of microbiologyReportSet">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Name</strong> -->
+                          <span style="font-size: 15px;">
+                            {{mbr.title}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <!-- <strong class="text-secondary">Value</strong> -->
+                        <span style="font-size: 15px;">
+                          {{mbr.content}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-1" >
+                        <div>
+                          <!-- <strong class="text-secondary">Unit</strong> -->
+                          <span style="font-size: 15px;">
+                            
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Abnormal Flag</strong> -->
+                          <span style="font-size: 15px;">
+                           
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <!-- <strong class="text-secondary">Report Issued Date/Time</strong> -->
+                        <span style="font-size: 15px;">
+                          {{mbr.formattedreportissueddatetime}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <!-- <strong class="text-secondary">Status</strong> -->
+                          <span style="font-size: 15px;">
+                            {{mbr.status}}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="observationSetText">
+                <ul class="list-group">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 1.0em;text-align: center">
+                      No relevant results
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <br>
+
+              <div>
+                <ul class="list-group" >
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-4" >
+                        <div>
+                          <strong class="text-secondary">Name</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1" >
+                        <div>
+                          <strong class="text-secondary">Dosage</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <strong class="text-secondary">Unit</strong>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <strong class="text-secondary">Route</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <strong class="text-secondary">Times per day</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <strong class="text-secondary">Start Date</strong>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <strong class="text-secondary">End Date</strong>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="epmaPrescription?.length > 0">
+                <ul class="list-group"  *ngFor="let epma_prescription of epmaPrescription">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 0.8em;">
+                      <div class="col-md-4">
+                        <div>
+                          <!-- <strong class="text-secondary">Name</strong> -->
+                          <span style="font-size: 15px;">
+                            {{epma_prescription.name}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <!-- <strong class="text-secondary">Value</strong> -->
+                        <span style="font-size: 15px;">
+                          {{epma_prescription.dosage}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-1" >
+                        <div>
+                          <!-- <strong class="text-secondary">Unit</strong> -->
+                          <span style="font-size: 15px;">
+                            {{epma_prescription.units}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <div>
+                          <!-- <strong class="text-secondary">Abnormal Flag</strong> -->
+                          <span style="font-size: 15px;">
+                            {{epma_prescription.route}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1">
+                        <!-- <strong class="text-secondary">Report Issued Date/Time</strong> -->
+                        <span style="font-size: 15px;">
+                          {{epma_prescription.timesperday}}
+                        </span>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Status</strong> -->
+                          <span style="font-size: 15px;">
+                            {{epma_prescription.startDate}}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div>
+                          <!-- <strong class="text-secondary">Status</strong> -->
+                          <span style="font-size: 15px;">
+                            {{epma_prescription.endDate}}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="medicationSetText">
+                <ul class="list-group">
+                  <li class="list-group-item">
+      
+                    <div class="row" style="font-size: 1.0em;text-align: center">
+                      No relevant medications
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <br>
+            </div>
+          </div>
+        </div>
+  
+    </div>
+</div>

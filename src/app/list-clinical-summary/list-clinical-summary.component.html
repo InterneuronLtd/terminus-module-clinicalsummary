@@ -1,0 +1,126 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div *ngIf="selectedClinicalSummaryView === 'list clinical summary'">
+
+  <button class="btn btn-info text-white" style="margin-bottom:10px ;" (click)="showClinicalSummary()">
+    <i class="fa fa-arrow-left"></i> Back
+  </button>
+
+    <div class="card">
+      <div class="card-header bg-secondary text-dark">
+        <div class="row">
+          <div class="col-md-9">
+            <h5>
+              <span>
+                <i class="fa fa-lock text-info"></i> &nbsp;
+              </span>
+              Clinical Summary
+            </h5>
+  
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div *ngIf="clinicalSummaryList">
+  
+          <div>
+            <br />
+            <ul class="list-group" *ngFor="let opt of clinicalSummaryList">
+              <li class="list-group-item">
+  
+                <div class="row" style="font-size: 0.8em;">
+                  <div class="col-md-3" (click)="viewClinalSummary()">
+                    <div>
+                      <strong class="text-secondary">Summary Date/Time</strong>
+                      <br />
+                      <span style="font-size: 15px;">
+                        {{opt.summarydatetime}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-2" (click)="viewClinalSummary()">
+                    <strong class="text-secondary">Status</strong>
+                    <br />
+                    <span style="font-size: 15px;">
+                      {{opt.status}}
+                    </span>
+                  </div>
+                  <div class="col-md-2" (click)="viewClinalSummary()">
+                    <div>
+                      <strong class="text-secondary">Admission Date</strong>
+                      <br />
+                      <span style="font-size: 15px;">
+                        {{opt.admissiondate}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-2" (click)="viewClinalSummary()">
+                    <div style="padding-left: 10px;">
+                      <strong class="text-secondary">Discharge Date</strong>
+                      <br />
+                      <span style="font-size: 15px;">
+                        {{opt.dischargedate}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3" (click)="viewClinalSummary()">
+                    <div style="padding-left: 10px;">
+                      <strong class="text-secondary">Uncompleted Tasks</strong>
+                      <br />
+                      <div>
+                        <span style="font-size: 15px;">
+                         {{opt.taskcount}}
+                        </span>
+                      </div>
+                     
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <br />
+        <br />
+  
+      </div>
+  
+      <!-- <div>
+        <div class="row">
+          <div class="col-md-6">
+            <button class="btn btn-secondary btn-sm text-white">
+                 Return to main menu
+            </button>
+          </div>
+          <div class="col-md-6">
+          </div>
+        </div>
+      </div> -->
+  
+    </div>
+  
+  </div>
+
+  <!-- <app-add-allergy *ngIf="selectedClinicalSummaryView === 'add'"></app-add-allergy> -->

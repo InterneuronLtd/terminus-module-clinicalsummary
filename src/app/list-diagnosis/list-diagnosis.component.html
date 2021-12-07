@@ -1,0 +1,104 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+    <div class="card-img-top bg-secondary text-white">
+      <div class="row">
+        <div class="col-md-9">
+          <h5 style="margin-left: 10px;">
+            Diagnoses
+          </h5>
+        </div>
+        <div class="col-md-3">
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+        <div>
+          <div class="table-responsive">
+            <div class="row">
+              <div class="col-md-6">
+                <!-- {{appService.AuthoriseAction('Edit Clinical Summary')}} -->
+                <button class="btn btn-sm btn-default text-white" (click)="addDiagnosis()" *ngIf="appService.AuthoriseAction('Edit Clinical Summary')">
+                    <!-- <i class="fa fa-plus"></i> -->
+                    <img src="assets/images/clinicalsummary/addicon.svg">
+                </button>
+              </div>
+
+              <div class="col-md-6">
+      
+                <div class="form-group">
+                </div>
+
+              </div>
+            </div>
+
+            <br>
+            
+            <p-table #dt1 [value]="diagnosisList" styleClass="p-datatable-gridlines p-datatable-sm" responsiveLayout="scroll" [globalFilterFields]="['clinicalstatus']">
+              
+              <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 10%;">Code</th>    
+                    <th>Name</th>    
+                    <th style="width: 12%;" pSortableColumn="onsetdate">Onset Date <p-sortIcon field="onsetdate"></p-sortIcon></th>    
+                    <!-- <th>Clinical Status</th>     -->
+                    <th>
+                        Clinical Status
+                        <p-columnFilter field="clinicalstatus" matchMode="equals" [showMenu]="false">
+                            <ng-template pTemplate="filter" let-code let-filter="filterCallback">
+                                <p-dropdown optionLabel="code" optionValue="code" [ngModel]="code" [options]="clinicalStatusList" (onChange)="filter($event.value)" placeholder="Please select" [showClear]="true">
+                                    <ng-template let-option pTemplate="item">
+                                        <span>{{option.code}}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </ng-template>
+                        </p-columnFilter>
+                  </th>
+                    <th style="width: 18%;">Verification Status</th>    
+                    <th style="width: 12%;">Resolved Date</th>    
+                    <!-- <th>Reported By</th>     -->
+                    <!-- <th>Recorded By</th>   -->
+                    <th style="width: 8%;">Actions</th>  
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-diagnosis_list>
+                  <tr>
+                    <td style="width: 10%;">{{diagnosis_list.code}}</td>    
+                    <td>{{diagnosis_list.name}}</td>    
+                    <td style="width: 12%;">{{diagnosis_list.onsetdate | date :'dd/MM/yyyy hh:mm'}}</td>    
+                    <td>{{diagnosis_list.clinicalstatus}}</td>    
+                    <td style="width: 18%;">{{diagnosis_list.verificationstatus}}</td>    
+                    <td style="width: 12%;">{{diagnosis_list.resolveddate | date :'dd/MM/yyyy hh:mm'}}</td>    
+                    <!-- <td>{{diagnosis_list.reportedby?diagnosis_list.reportedby:''}}</td>     -->
+                    <!-- <td>{{diagnosis_list.recordedby?diagnosis_list.recordedby:''}}</td>   -->
+                    <td style="width: 8%;">
+                      <a  *ngIf="appService.AuthoriseAction('Edit Clinical Summary')" href="javascript:void(0)" (click)="editDiagnosis(diagnosis_list.diagnosis_id)"><img src="assets/images/clinicalsummary/editIcon.svg"></a>&nbsp;
+                      <a href="javascript:void(0)" (click)="viewHistory(diagnosis_list.diagnosis_id)"><img src="assets/images/clinicalsummary/history.svg"></a>
+                    </td>    
+                  </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+  
+      </div>
+</div>

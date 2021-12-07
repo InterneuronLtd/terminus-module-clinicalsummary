@@ -1,0 +1,15 @@
+#DataTables_Table_0_length {
+    display: none !important;
+}
+
+.dataTables_length{
+    display: none !important;
+}
+
+:host ::ng-deep .ck-editor__editable_inline {
+    min-height: 200px;
+}
+
+canvas { 
+    border-style: solid; 
+}

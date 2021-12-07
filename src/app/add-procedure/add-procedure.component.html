@@ -1,0 +1,217 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+
+  <div class="modal-header bg-info text-white">
+    <h5 class="modal-title">
+     {{title}}
+    </h5>
+  
+    <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
+      <!-- <span aria-hidden="true">&times;</span> -->
+      <img src="assets/images/clinicalsummary/closeIcon.svg">
+    </button>
+  </div>
+  <div class="modal-body">
+    <span class="text-dark">
+      <div>
+        <div class="card">
+          <div class="card-body">
+            <div *ngIf="!procedureId">
+              <label for="procedure">Select Procedure:</label>
+                <p-autoComplete [suggestions]="results" (completeMethod)="search($event)"
+                [multiple]="false" [forceSelection]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                (onSelect)="selectedValue($event)" (onUnselect)="unSelectedValue($event)" [minLength]="3" #name="ngModel"
+                #autocomplete  field="_term"  [(ngModel)]="procedure.name">
+                  <ng-template let-procedure pTemplate="item">
+                      <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                        <div style="font-size:14px;margin:10px 10px 0 0">{{ procedure.term }}</div>
+                        <div style="font-size:14px;margin:10px 10px 0 0">{{ procedure.code }}</div>
+                      </div>
+                  </ng-template>
+                </p-autoComplete>
+                <!-- <div [hidden]="name.valid" class="text-danger">
+                  <i>Please select procedure.</i>
+                </div> -->
+            </div>
+
+            <div class="h6" *ngIf="procedureId">
+  
+              <div class='border rounded bg-info text-white' style="padding: 5px; font-weight: bold;">
+                {{procedureName}}
+              </div>
+            </div>
+
+              <hr *ngIf="showProcedureForm">
+  
+              <div class="row" *ngIf="showProcedureForm">
+                <div class="col-md-12">
+                  <!-- Content goes here  -->
+                  <form #addProcedureForm="ngForm" autocomplete="off">
+
+                    <div class="form-group">
+                      <label for="proceduredate">Procedure Date:</label>
+                      <div class="input-group">
+                        <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker
+                          [maxDate]="maxDateValue" id="proceduredate" name="proceduredate" [ngClass]="{ 'is-invalid': proceduredate.invalid }"
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true }" 
+                          aria-describedby="proceduredate" (keydown)="false" [(ngModel)]="procedure.proceduredate" #proceduredate="ngModel">
+                      </div>
+                      <div [hidden]="proceduredate.valid" class="text-danger">
+                        <i>Procedure Date is required</i>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+      
+                        <div class="form-group">
+                            <label for="isdateapproximate">Is date approximate?</label><br>
+                            <input type="radio" name="isdateapproximate" value="Yes" [(ngModel)]="procedure.isdateapproximate" #isdateapproximate="ngModel" (change)="selectApproximateDate()">&nbsp; 
+                            <label for="isdateapproximate" class="form-check-label">Yes</label>&nbsp;
+                            <input type="radio" name="isdateapproximate" value="No" [(ngModel)]="procedure.isdateapproximate" #isdateapproximate="ngModel" (change)="selectApproximateDate()">&nbsp;
+                            <label for="isdateapproximate" class="form-check-label">No</label>
+                        </div>
+      
+                      </div>
+                      <div class="col-md-6" *ngIf="showDateEffectivePeriod">
+      
+                        <div class="form-group">
+                          <label for="dateeffectiveperiod">Effective Period</label><br>
+                          <input type="radio" name="dateeffectiveperiod" value="Month" [(ngModel)]="procedure.dateeffectiveperiod" #dateeffectiveperiod="ngModel" (change)="selectEffectivePeriod()">&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Month</label>&nbsp;
+                          <input type="radio" name="dateeffectiveperiod" value="Year" [(ngModel)]="procedure.dateeffectiveperiod" #dateeffectiveperiod="ngModel" (change)="selectEffectivePeriod()">&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Year</label>&nbsp;
+                        </div>   
+                      </div>
+                      
+                    </div>
+
+                    <div class="form-group" *ngIf="showDatePicker">
+                      <div class="input-group">
+                          <input [(ngModel)]="procedure.proceduredate" #effectivedatestring="ngModel" autocomplete="off" class="form-control" name="date" 
+                          bsDatepicker [bsConfig]="bsConfig" [maxDate]="maxDateValue" readonly>
+                      </div>
+
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-12">
+      
+                        <div class="form-group">
+                          <label for="status">Status:</label>
+                            <select name="status" id="status" class="form-control"
+                              [(ngModel)]="procedure.status" required #status="ngModel"
+                              [ngClass]="{ 'is-invalid': status.invalid}">
+                              <option value="">Please select</option>
+                              <option *ngFor="let opt of procedureStatusList"
+                                value="{{ opt.code }}">
+                                {{ opt.code }}
+                              </option>
+                            </select>
+                            <div [hidden]="status.valid" class="text-danger">
+                              <i>Status is required</i>
+                            </div>
+                        </div>
+      
+                      </div>
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="reportedby">Performed By:</label>
+                          <div class="input-group">
+                            <!-- <input class="form-control"  type="text" name="performedby" [(ngModel)]="procedure.performedby"> -->
+                            <p-autoComplete name="performedby" [suggestions]="assistants" autoCompleteValidation (completeMethod)="searchAssistant($event)" (onSelect)="selectedAssistant($event)" [multiple]="false"
+                              (onUnselect)="unSelectedAssistant($event)" [minLength]="1" [maxlength]="255" [(ngModel)]="procedure.performedby">
+                                    <ng-template let-assistants pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.firstname }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template let-assistants pTemplate="selectedItem">
+                                        <div>
+                                            {{ assistants.firstname }}
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="recordedby">Recorded By:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{procedure._createdby}}
+                          </span>
+                        </div>
+                      </div> -->
+                    </div>
+      
+                    <!-- <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Recorded Date/Time:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{procedure._createddate | date:'dd/MM/yyyy HH:mma'}}
+                          </span>
+                        </div>
+                      </div>
+                    </div> -->
+      
+                    <hr />
+      
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <button class="btn btn-secondary text-white btn-block" 
+                            (click)="dismiss()">
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <button *ngIf="!procedureId" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addProcedureForm.form.valid" (click)="addProcedure()">
+                                Save
+                            </button>
+
+                            <button *ngIf="procedureId" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addProcedureForm.form.valid" (click)="editProcedure()">
+                                Save
+                            </button>
+                        </div>
+                      </div>
+                    </div>
+      
+                  </form>
+                  <!-- Content ends here -->
+                </div>
+              </div> 
+          </div>  
+        </div>
+  
+      </div>
+  
+    </span>
+  </div>

@@ -1,0 +1,54 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+    <div class="card-img-top bg-secondary text-white">
+      <div class="row">
+        <div class="col-md-9">
+          <h5 style="margin-left: 10px;">
+            Clinical Summary Notes
+          </h5>
+
+        </div>
+        <div class="col-md-3">
+          <!-- <button class="btn btn-info float-right text-white" (click)="viewHistory()"> -->
+              <!-- <i class="fa fa-history" title="History"></i> -->
+              <img src="assets/images/clinicalsummary/history.svg" style="float:right;margin-right:8px" (click)="viewHistory()">
+          <!-- </button> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+        <div>
+          <div>
+            <ckeditor id="classic-editor" [editor]="Editor" [(ngModel)]="clinicalSummaryNotes" (keyup)="showButtons()" [disabled]="!appService.AuthoriseAction('Edit Clinical Summary')"></ckeditor>
+            <br>
+            {{summaryNotes?._createdby}}
+            {{summaryNotes?._createdtimestamp | date : 'dd-MM-yyy HH:mm'}}
+          </div>
+          <div class="container" *ngIf="showCancelSaveButtons">
+            <button type="button" class="btn btn-secondary" (click)="dismiss()">Cancel</button>&nbsp;
+            <button type="button" class="btn btn-info text-white" (click)="saveClinicalSummary()">Save</button>    
+          </div>
+        </div>
+  
+      </div>
+</div>

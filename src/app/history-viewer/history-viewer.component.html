@@ -1,0 +1,274 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="modal-header bg-info text-white">
+    <h5 class="modal-title">
+      <!-- <fa name="check-square"></fa> -->
+      Procedure History ({{procedureName}})
+      <!-- - {{ title }} -->
+    </h5>
+  
+    <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
+      <!-- <span aria-hidden="true">&times;</span> -->
+      <img src="assets/images/clinicalsummary/closeIcon.svg">
+    </button>
+  </div>
+  <div class="modal-body">
+    <span class="text-dark">
+
+    <div *ngIf="historyView == 'form'">
+        <div *ngIf="procedure">
+            <div class="alert alert-info">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button class="btn btn-info text-white" (click)="backToList()">
+                            <!-- <fa name="chevron-left"></fa> -->
+                            <i class="fa fa-arrow-left"></i> Back
+                        </button>
+                    </div>
+                    <div class="col-md-5">
+                        <strong>Timestamp</strong><br />
+                        {{procedure._createddate | date:'dd/MM/yyyy HH:mm'}}
+                    </div>
+                    <div class="col-md-5">
+                        <strong>User</strong><br />
+                        <span *ngIf="procedure._createdby"> {{ procedure._createdby }} </span>
+                        <span *ngIf="!procedure._createdby"> Dev User </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <div *ngIf="historyView == 'list'">
+        <div *ngIf="procedureHistoryList">
+            <ul class="list-group" *ngFor="let opt of procedureHistoryList">
+            <li class="list-group-item list-group-item-action" (click)="viewHistoryForm(opt)">
+                <div style="padding:5px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        {{opt._createddate | date:'dd/MM/yyyy HH:mm'}}
+                    </div>
+                    <div class="col-md-5">
+                        <span *ngIf="opt._createdby"> {{ opt._createdby }} </span>
+                        <span *ngIf="!opt._createdby"> Dev User </span>
+                    </div>
+                    <!-- <div class="col-md-4">
+                    <strong>Assigned to</strong><br />
+                    {{opt.assignedto}}
+                </div> -->
+                    <div class="col-md-1" style="padding-top:2px;">
+                    <span class="float-right text-dark">
+                        <!-- <fa name="arrow-right"></fa> -->
+                    </span>
+                    </div>
+                </div>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </div>
+
+  
+      <div *ngIf="historyView == 'form'">
+
+        <div class="card">
+          <div class="card-header bg-secondary text-dark">
+            <div class="row">
+              <div class="col-md-6">
+                <h5>
+                  Procedure
+                </h5>
+  
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+  
+            <div *ngIf="procedure">
+              <div class="h6">
+  
+                <div class='border rounded bg-info text-white' style="padding: 5px; font-weight: bold;">
+                  {{procedure.name}}
+                </div>
+              </div>
+  
+              <div class="row">
+                <div class="col-md-12">
+                  <!-- Content goes here  -->
+                  <form #addProcedureForm="ngForm" autocomplete="off">
+
+                    <div class="form-group">
+                      <label for="proceduredate">Procedure Date/Time:</label>
+                      <div class="input-group">
+                        <!-- <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker
+                          id="proceduredate" name="proceduredate" disabled aria-describedby="proceduredate" (keydown)="false"
+                          [(ngModel)]="procedure.proceduredate" #proceduredate="ngModel"> -->
+                          <div class="input-group">
+                            <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker
+                              id="proceduredate" name="proceduredate" [ngClass]="{ 'is-invalid': proceduredate.invalid }" disabled
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default', adaptivePosition: true }" 
+                              aria-describedby="proceduredate" (keydown)="false" [(ngModel)]="procedure.proceduredate" #proceduredate="ngModel">
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+      
+                        <div class="form-group">
+                            <label for="isdateapproximate">Is date approximate?</label><br>
+                            <input type="radio" name="isdateapproximate" value="Yes" [(ngModel)]="procedure.isdateapproximate" #isdateapproximate="ngModel" disabled>&nbsp; 
+                            <label for="isdateapproximate" class="form-check-label">Yes</label>&nbsp;
+                            <input type="radio" name="isdateapproximate" value="No" [(ngModel)]="procedure.isdateapproximate" #isdateapproximate="ngModel" disabled>&nbsp;
+                            <label for="isdateapproximate" class="form-check-label">No</label>
+                        </div>
+      
+                      </div>
+                      <div class="col-md-6" *ngIf="showDateEffectivePeriod">
+      
+                        <div class="form-group">
+                          <label for="dateeffectiveperiod">Effective Period</label><br>
+                          <input type="radio" name="dateeffectiveperiod" value="Month" [(ngModel)]="procedure.dateeffectiveperiod" #dateeffectiveperiod="ngModel" disabled>&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Month</label>&nbsp;
+                          <input type="radio" name="dateeffectiveperiod" value="Year" [(ngModel)]="procedure.dateeffectiveperiod" #dateeffectiveperiod="ngModel" disabled>&nbsp;
+                          <label for="dateeffectiveperiod" class="form-check-label">Year</label>&nbsp;
+                        </div>   
+                      </div>
+                      
+                    </div>
+
+                    <div class="form-group" *ngIf="showDatePicker">
+                      <div class="input-group">
+                          <input [(ngModel)]="procedure.proceduredate" #effectivedatestring="ngModel" autocomplete="off" class="form-control" name="date" 
+                          bsDatepicker [bsConfig]="bsConfig" disabled>
+                      </div>
+
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-12">
+      
+                        <div class="form-group">
+                          <label for="status">Status:</label>
+                            <select name="status" id="status" class="form-control" disabled
+                            [(ngModel)]="procedure.status" #status="ngModel">
+                              <option value="">Please Select</option>
+                              <option *ngFor="let opt of procedureStatusList"
+                                value="{{ opt.code }}">
+                                {{ opt.code }}
+                              </option>
+                            </select>
+                        </div>
+      
+                      </div>
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="reportedby">Performed By:</label>
+                          <div class="input-group">
+                            <input class="form-control"  type="text" name="performedby" disabled [(ngModel)]="procedure.performedby">
+                            <!-- <p-autoComplete [suggestions]="assistants" autoCompleteValidation [multiple]="false"
+                               [minLength]="1" [maxlength]="255" field="firstname">
+                                    <ng-template let-assistants pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.firstname }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template let-assistant pTemplate="selectedItem">
+                                        <div>
+                                            {{ assistant.firstname }}
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete> -->
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="recordedby">Recorded By:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{procedure._createdby}}
+                          </span>
+                        </div>
+                      </div> -->
+                    </div>
+      
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="recordedby">Recorded By:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{procedure._createdby}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Recorded Date/Time:</label>
+                          <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            {{procedure._createddate | date:'dd/MM/yyyy HH:mma'}}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+      
+                  </form>
+                  <!-- Content ends here -->
+                </div>
+              </div>
+  
+  
+            </div>
+  
+          </div>
+  
+  
+        </div>
+  
+  
+        <!-- <hr />
+  
+        <button class="btn btn-info text-white" (click)="backToList()">
+            <i class="fa fa-arrow-left"></i> Back
+        </button> -->
+  
+      </div>
+    </span>
+  </div>
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-secondary btn-sm" (click)="decline()">
+      <fa name="times"></fa> {{ btnCancelText }}
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="accept()" ngbAutofocus>
+      <fa name="check"></fa> {{ btnOkText }}
+    </button> -->
+  </div>
+  
+  <ngx-spinner name="form-history-spinner" bdColor="rgba(0, 0, 0, 0.8)" [fullScreen]="false" type="ball-spin-clockwise"
+    size="medium">
+    <p style="color: white"> Loading ... </p>
+  </ngx-spinner>
+  

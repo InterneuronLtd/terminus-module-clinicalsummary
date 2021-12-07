@@ -1,0 +1,138 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="modal-header bg-info text-white">
+    <h5 class="modal-title">
+      <!-- <fa name="check-square"></fa> -->
+      Investigation Note History
+      <!-- - {{ title }} -->
+    </h5>
+  
+    <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
+      <!-- <span aria-hidden="true">&times;</span> -->
+      <img src="assets/images/clinicalsummary/closeIcon.svg">
+    </button>
+  </div>
+  <div class="modal-body">
+    <span class="text-dark">
+
+    <div *ngIf="historyView == 'form'">
+        <div *ngIf=" investigationResultsNotes">
+            <div class="alert alert-info">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button class="btn btn-info text-white" (click)="backToList()">
+                            <!-- <fa name="chevron-left"></fa> -->
+                            <i class="fa fa-arrow-left"></i> Back
+                        </button>
+                    </div>
+                    <div class="col-md-5">
+                        <strong>Timestamp</strong><br />
+                        {{ investigationResultsNotes._createddate | date:'dd/MM/yyyy HH:mm'}}
+                    </div>
+                    <div class="col-md-5">
+                        <strong>User</strong><br />
+                        <span *ngIf=" investigationResultsNotes._createdby"> {{  investigationResultsNotes._createdby }} </span>
+                        <span *ngIf="! investigationResultsNotes._createdby"> Dev User </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <div *ngIf="historyView == 'list'">
+        <div *ngIf=" investigationResultsNotesHistoryList?.length > 0">
+            <ul class="list-group" *ngFor="let opt of  investigationResultsNotesHistoryList">
+            <li class="list-group-item list-group-item-action" (click)="viewHistoryForm(opt)">
+                <div style="padding:5px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        {{opt._createddate | date:'dd/MM/yyyy HH:mm'}}
+                    </div>
+                    <div class="col-md-3">
+                        <span *ngIf="opt._createdby"> {{ opt._createdby }} </span>
+                        <span *ngIf="!opt._createdby"> Dev User </span>
+                    </div>
+                    <div class="col-md-6" [innerHTML]="opt.clinicalinvestigationnotes" style="word-wrap: break-word">
+                        <!-- {{opt.clinicalinvestigationnotes}} -->
+                    </div>
+                </div>
+                </div>
+            </li>
+            </ul>
+        </div>
+        <div *ngIf=" investigationResultsNotesHistoryList?.length == 0">
+          <span>There is no historical record present.</span>
+        </div>
+    </div>
+
+    <div *ngIf="historyView == 'form'">
+
+        <div class="card">
+          <!-- <div class="card-header bg-secondary text-dark">
+            <div class="row">
+              <div class="col-md-6">
+                <h5>
+                  clinical Summary Notes
+                </h5>
+  
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+          </div> -->
+          <div class="card-body">
+  
+            <div>
+                <div [innerHTML]=" investigationResultsNotes.notes">
+                    <!-- <ckeditor [editor]="Editor" [(ngModel)]=" investigationResultsNotes.notes"></ckeditor> -->
+                </div>
+            </div>
+  
+          </div>
+  
+  
+        </div>
+  
+  
+        <!-- <hr />
+  
+        <button class="btn btn-info text-white" (click)="backToList()">
+            <i class="fa fa-arrow-left"></i> Back
+        </button> -->
+  
+      </div>
+     
+    </span>
+  </div>
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-secondary btn-sm" (click)="decline()">
+      <fa name="times"></fa> {{ btnCancelText }}
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="accept()" ngbAutofocus>
+      <fa name="check"></fa> {{ btnOkText }}
+    </button> -->
+  </div>
+  
+  <ngx-spinner name="form-history-spinner" bdColor="rgba(0, 0, 0, 0.8)" [fullScreen]="false" type="ball-spin-clockwise"
+    size="medium">
+    <p style="color: white"> Loading ... </p>
+  </ngx-spinner>
+  

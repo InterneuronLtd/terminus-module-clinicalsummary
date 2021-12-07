@@ -1,0 +1,71 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div *ngIf="!isProduction" class="row" style="padding-top:5px; min-height: 800px;">
+
+  <div [ngClass]="{
+        'col-md-3': showDevSearch,
+        'hidden-item': !showDevSearch
+    }" style="padding:5px;">
+
+    <app-fake-data-contract></app-fake-data-contract>
+
+  </div>
+  <div [ngClass]="{
+    'col-md-9 border-left border-secondary': showDevSearch,
+    'col-md-12': !showDevSearch
+    }">
+    <div class="alert alert-secondary" role="alert">
+      <div class="row">
+        <div class="col-md-1">
+          <button class="btn btn-dark btn-sm float-left" (click)="toggleDevSearch()">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+        <div class="col-md-11">
+          <span class="h5 float-right">
+            <i class="fa fa-wrench"></i>Dev Mode
+          </span>
+          <br />
+          <small class="float-right">
+
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <app-viewer></app-viewer>
+
+
+  </div>
+
+
+</div>
+
+<div class="row" *ngIf="isProduction">
+  <div class="col-md-12">
+    <app-viewer></app-viewer>
+  </div>
+</div>
+
+
+<button id="btnScrollToTop" *ngIf="isShow" (click)="gotoTop()">
+  <i class="fa fa-arrow-up"></i>Scroll to top
+</button>
