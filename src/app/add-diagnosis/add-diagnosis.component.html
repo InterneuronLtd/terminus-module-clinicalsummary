@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2021  Interneuron CIC
+Copyright(C) 2022  Interneuron CIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,35 +18,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.If not, see<http://www.gnu.org/licenses/>. -->
 <!--END LICENSE BLOCK--> 
-<!-- <div>
-
-    <div>
-      <ul class="list-group">
-        <li class="list-group-item list-group-item-action">
-          <div style="padding:5px;">
-            <div class="row">
-              <div class="col-md-6">
-                lastupdatedrecorddatetime
-              </div>
-              <div class="col-md-5">
-                <span > createdby </span>
-                <span > Dev User </span>
-              </div>
-              <div class="col-md-1" style="padding-top:2px;">
-                <span class="float-right text-dark">
-                  
-                </span>
-              </div>
-            </div>
-          </div>
-
-
-
-        </li>
-      </ul>
-    </div>
-  </div> -->
-
   <div class="modal-header bg-info text-white">
     <h5 class="modal-title">
      {{title}}
@@ -54,7 +25,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
   
     <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
       <!-- <span aria-hidden="true">&times;</span> -->
-      <img src="assets/images/clinicalsummary/closeIcon.svg">
+      <img src="assets/images/clinicalsummary/closeIcon.svg" height="18px">
     </button>
   </div>
   <div class="modal-body">
@@ -78,6 +49,15 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                 <!-- <div [hidden]="diagnosistext.valid" class="text-danger">
                   <i>Please select diagnosis.</i>
                 </div> -->
+                <span class="text-secondary" *ngIf="diagnosis.diagnosistext">
+                  <small class="float-right" style="float:right;font-style: italic; cursor: pointer; margin-top: 2px;"
+                    *ngIf="diagnosis.diagnosistext" (click)="clearSelectedDiagnosis()">
+                    <i class="fa fa-times"></i>Clear
+                  </small>
+                </span>
+                <div class="alert alert-danger" role="alert" *ngIf="showAlert && diagnosis.diagnosistext != null && diagnosis.diagnosistext != ''" style="margin-top:20px;">
+                  This value is not codified and will not be recognized by decision support tools.
+                </div>
               </div>
 
               <div class="h6" *ngIf="diagnosisId">
@@ -99,7 +79,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       <div class="input-group">
                         <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker required
                           [maxDate]="maxDateValue" id="onsetdate" name="onsetdate"  [(ngModel)]="diagnosis.onsetdate" #onsetdate="ngModel"
-                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY' , containerClass: 'theme-default', adaptivePosition: true}" aria-describedby="onsetdate" 
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY' , containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}" aria-describedby="onsetdate" 
                           [ngClass]="{ 'is-invalid': onsetdate.invalid }" (keydown)="false">
                       </div>
                       <div [hidden]="onsetdate.valid" class="text-danger">
@@ -183,10 +163,13 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="form-group">
                       <label for="onsetdate">Resolved Date:</label>
                       <div class="input-group">
-                        <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker required
-                          [maxDate]="maxDateValue" id="resolveddate" name="resolveddate" [(ngModel)]="diagnosis.resolveddate" #resolveddate="ngModel"
-                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true }" aria-describedby="enddate" (keydown)="false">
+                        <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker [maxDate]="maxDateValue"
+                         [minDate]="diagnosis.onsetdate" id="resolveddate" name="resolveddate" [(ngModel)]="diagnosis.resolveddate" #resolveddate="ngModel"
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false }" aria-describedby="enddate" >
                       </div>
+                      <!-- <div [hidden]="resolveddate.valid" class="text-danger">
+                        <i>Resolved Date is required</i>
+                      </div> -->
                     </div>
       
                     <!-- <div class="row">
@@ -224,7 +207,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button class="btn btn-secondary text-white btn-block" 
+                          <button class="btn btn-light text-dark btn-block" 
                             (click)="dismiss()">
                             Cancel
                           </button>
@@ -232,12 +215,12 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button *ngIf="!diagnosisId" class="btn btn-info text-white btn-block" 
+                          <button *ngIf="!diagnosisId" style="float:right;" class="btn btn-info text-white btn-block" 
                             [disabled]="!addDiagnosisForm.form.valid" (click)="addDiagnosis()">
                                 Save
                             </button>
 
-                            <button *ngIf="diagnosisId" class="btn btn-info text-white btn-block" 
+                            <button *ngIf="diagnosisId" style="float:right;" class="btn btn-info text-white btn-block" 
                             [disabled]="!addDiagnosisForm.form.valid" (click)="editDiagnosis()">
                                 Save
                             </button>

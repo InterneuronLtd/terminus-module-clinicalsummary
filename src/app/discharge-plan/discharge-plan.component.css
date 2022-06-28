@@ -1,0 +1,11 @@
+.ck-editor__editable {
+    max-height: 200px !important;
+}
+
+::ng-deep ngb-modal-backdrop {
+    z-index: 1049 !important;
+  }
+
+  ::ng-deep ngb-modal-window {
+    margin-top: 50px !important;
+  }

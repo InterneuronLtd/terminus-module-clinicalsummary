@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ export class RecentLaboratoryResultsComponent implements OnInit {
   resultsArray: any;
   resultArray: any;
   title = "Hello child component";
- 
-  @ViewChild('canvas', { static: true }) 
+
+  @ViewChild('canvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
 
   private ctx: CanvasRenderingContext2D;
@@ -71,16 +71,16 @@ export class RecentLaboratoryResultsComponent implements OnInit {
 
     this.getLabResultsURI = this.appService.carerecorduri + '/ClinicalSummary/GetLabResults/';
     this.initialiseFunctions();
-    
+
   };
 
   constructor(private apiRequest: ApirequestService,
-    public appService: AppService, 
+    public appService: AppService,
     private subjects: SubjectsService,
     public globalService: GlobalService,
-    private toasterService: ToasterService,) { 
+    private toasterService: ToasterService,) {
 
-      
+
 
 
     this.subjects.personIdChange.subscribe( () => {
@@ -93,18 +93,18 @@ export class RecentLaboratoryResultsComponent implements OnInit {
       if(value)
       {
         this.appService.clinicalsummaryId = value;
-      } 
+      }
     });
   }
 
   ngOnInit(): void {
-  
+
   }
 
   async initialiseFunctions()
   {
     this.getLabResults();
- 
+
   }
 
   async getLabResults()
@@ -118,11 +118,11 @@ export class RecentLaboratoryResultsComponent implements OnInit {
         if(this.laboratoryData != '[]')
         {
           let resultsData: any;
-        
+
            this.resultsArray = new Array();
 
           for(var i = 0; i < this.laboratoryData.length; i++){
-            
+
             let tempResultArray = new Array();
 
             resultsData = JSON.parse(this.laboratoryData[i]);
@@ -140,11 +140,11 @@ export class RecentLaboratoryResultsComponent implements OnInit {
               tempResultArray.push(result);
 
             }
-            this.resultsArray.push(tempResultArray);   
+            this.resultsArray.push(tempResultArray);
           }
           this.refreshingList = false;
         }
-        
+
       })
     )
   }

@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ export class AppComponent implements OnDestroy{
   showDevSearch: boolean = true;
   searchClass: string = "col-md-3";
   mainClass: string = "col-md-9";
-  
+
   topPosToStartShowing = 100;
   isShow: boolean;
 
@@ -102,7 +102,10 @@ export class AppComponent implements OnDestroy{
     this.subscriptions.add(this.subjects.encounterChange.subscribe(() => {
       this.GetMetaData();
     }));
-
+    this.subscriptions.add(this.subjects.frameworkEvent.subscribe((e: string) => {
+      this.EmitFrameworkEvent(e);
+      console.log("Framework Event Emitted", e);
+    }));
     this.EmitFrameworkEvent("COLLAPSE_PATIENT_LIST");
 
   }
@@ -238,7 +241,7 @@ export class AppComponent implements OnDestroy{
           this.subscriptions.add(this.apiRequest.postRequest(`${this.appService.baseURI}/GetBaseViewListByPost/rbac_actions`, this.createRoleFilter(decodedToken))
             .subscribe((response: action[]) => {
               this.appService.roleActions = response;
-            
+
             }));
 
       }
@@ -308,5 +311,5 @@ export class AppComponent implements OnDestroy{
     });
   }
 
-  
+
 }

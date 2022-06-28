@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -45,12 +45,16 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ConfirmationDialogComponent implements OnInit {
 
+  @Input() owner: string;
   @Input() title: string;
   @Input() message: string;
   @Input() btnOkText: string;
   @Input() btnCancelText: string;
+  @Input() btnYesText: string;
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal) {
+    
+   }
 
   ngOnInit() {
   }

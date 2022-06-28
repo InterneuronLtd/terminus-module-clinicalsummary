@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -39,8 +39,7 @@ import { SubjectsService } from '../services/subjects.service';
 @Component({
   selector: 'app-add-diagnosis',
   templateUrl: './add-diagnosis.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./add-diagnosis.component.css']
+  styleUrls: ['./add-diagnosis.component.css'],
 })
 export class AddDiagnosisComponent implements OnInit {
 
@@ -68,6 +67,7 @@ export class AddDiagnosisComponent implements OnInit {
 
   opDiagnoses: SNOMED[] = [];
   diagnosisName: string;
+  showAlert: boolean = false;
 
   otherConcept: TerminologyConcept = {
       concept_id: 9177,
@@ -92,12 +92,12 @@ export class AddDiagnosisComponent implements OnInit {
   getDiagnosisByIdURI: string = this.appService.carerecorduri + "/ClinicalSummary/GetDiagnosisHistory/";
 
   constructor(private activeModal: NgbActiveModal,
-    private apiRequest: ApirequestService, 
-    public appService: AppService, 
+    private apiRequest: ApirequestService,
+    public appService: AppService,
     public globalService: GlobalService,
-    private confirmationDialogService: ConfirmationDialogService, 
+    private confirmationDialogService: ConfirmationDialogService,
     private toasterService: ToasterService,
-    private subjects: SubjectsService ) { 
+    private subjects: SubjectsService ) {
 
       this.subjects.personIdChange.subscribe( () => {
         if(!this.appService.personId) {
@@ -115,7 +115,7 @@ export class AddDiagnosisComponent implements OnInit {
         if(value)
         {
           this.appService.clinicalsummaryId = value;
-        } 
+        }
       });
 
       this.diagnosis = {} as Diagnosis;
@@ -132,14 +132,14 @@ export class AddDiagnosisComponent implements OnInit {
 
       this.diagnosis.reportedby = this.appService.currentPersonName;
 
-      this.diagnosis.resolveddate = this.globalService.getDate();
+      this.diagnosis.resolveddate = null;
       this.diagnosis.diagnosiscode = null;
       this.diagnosis.diagnosistext = "";
       this.diagnosis.enddate = null;
       this.diagnosis.statuscode = null;
       this.diagnosis.statustext = null;
       this.diagnosis.isdateapproximate = 'No';
-      this.diagnosis.dateeffectiveperiod = null;
+      this.diagnosis.dateeffectiveperiod = 'Month';
 
       this.diagnosis._createdby = this.appService.loggedInUserName;
       this.diagnosis._createddate = new Date(this.globalService.getDateTime());
@@ -148,8 +148,8 @@ export class AddDiagnosisComponent implements OnInit {
 
   ngOnInit(): void {
     // console.log('diagnosisId',this.diagnosisId);
-    this.bsConfig = {  dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default', adaptivePosition: true };
-  
+    // this.bsConfig = {  dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false };
+
     if(this.diagnosisId)
     {
       this.showDiagnosisForm = true;
@@ -162,13 +162,13 @@ export class AddDiagnosisComponent implements OnInit {
           this.diagnosis = data.reverse();
 
           this.diagnosisName = data[0].diagnosistext;
-          
+
           this.diagnosis.diagnosistext = '{"_term":"'+data[0].diagnosistext+'","_code":"'+data[0].diagnosiscode+'","bindingValue":"'+data[0].diagnosiscode+' | '+data[0].diagnosistext+'","fsn":"'+data[0].diagnosistext+' (disorder)","level":0,"parentCode":null}';
           this.diagnosis.diagnosistext = <SNOMED>JSON.parse(this.diagnosis.diagnosistext);
           this.diagnosis.onsetdate = new Date(data[0].onsetdate);
           this.diagnosis.verificationstatus = data[0].verificationstatus;
           this.diagnosis.clinicalstatus = data[0].clinicalstatus;
-          this.diagnosis.resolveddate = new Date(data[0].resolveddate);
+          this.diagnosis.resolveddate = data[0].resolveddate?new Date(data[0].resolveddate):null;
           this.diagnosis._createdby = this.appService.loggedInUserName;
           this.diagnosis._createddate = new Date(this.globalService.getDateTime());
           this.diagnosis.isdateapproximate = data[0].isdateapproximate;
@@ -176,20 +176,22 @@ export class AddDiagnosisComponent implements OnInit {
           {
             this.showDateEffectivePeriod = true;
             this.showDatePicker = true;
-            
+
             this.diagnosis.dateeffectiveperiod = data[0].dateeffectiveperiod;
             if(data[0].dateeffectiveperiod == 'Month')
             {
-              this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
+              this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
               this.diagnosis.effectivedatestring  = new Date(data[0].effectivedatestring);
             }
             else{
-              this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true}
+              this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
               this.diagnosis.effectivedatestring  = new Date(data[0].effectivedatestring);
             }
-            
-          }
 
+          }
+          else{
+            this.diagnosis.dateeffectiveperiod = 'Month';
+          }
         })
       )
     }
@@ -243,15 +245,18 @@ export class AddDiagnosisComponent implements OnInit {
               if (resultsFromDb.length == 0) {
                   let concept: SNOMED = new SNOMED();
                   concept.code = this.otherConcept.conceptcode;
-                  concept.term = event.query + ' (Other)';
-  
+                  concept.term = event.query + ' (Not a codified value)';
+                  this.showAlert = true;
                   resultsFromDb.push(concept);
-              }
+                }
+                else{
+                  this.showAlert = false;
+                }
               this.results = resultsFromDb;
             })
       );
     }
-    
+
 }
 
 selectedValue(diag: SNOMED) {
@@ -278,8 +283,13 @@ selectedValue(diag: SNOMED) {
                 diagnosis.diagnosiscode = diag.code,
                 diagnosis.diagnosistext = diag.term
 
-            this.clinicalSummaryDiagnosis.push(diagnosis);
+            this.clinicalSummaryDiagnosis[0] = diagnosis;
         }
+  }
+
+  clearSelectedDiagnosis() {
+    this.diagnosis.diagnosistext = null;
+    this.diagnosis.diagnosiscode = null;
   }
 
   unSelectedValue(event) {
@@ -301,6 +311,8 @@ selectedValue(diag: SNOMED) {
 
   selectApproximateDate()
   {
+    this.showDatePicker = true;
+    this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     // console.log('callled', this.diagnosis.isdateapproximate);
     if(this.diagnosis.isdateapproximate == 'Yes')
     {
@@ -317,11 +329,11 @@ selectedValue(diag: SNOMED) {
     if(this.diagnosis.dateeffectiveperiod == 'Month')
     {
       this.showDatePicker = true;
-      this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
+      this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     }
     else{
       this.showDatePicker = true;
-      this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true}
+      this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     }
   }
 
@@ -330,13 +342,13 @@ selectedValue(diag: SNOMED) {
     {
       container.monthSelectHandler = (event: any): void => {
         container._store.dispatch(container._actions.select(event.date));
-      };     
+      };
       container.setViewMode('month');
     }
     else{
       container.monthSelectHandler = (event: any): void => {
         container._store.dispatch(container._actions.select(event.date));
-      };     
+      };
       container.setViewMode('year');
     }
    }
@@ -355,7 +367,7 @@ selectedValue(diag: SNOMED) {
       onsetdate: this.appService.getDateTimeinISOFormat(this.diagnosis.onsetdate),
       clinicalstatus: this.diagnosis.clinicalstatus,
       verificationstatus: this.diagnosis.verificationstatus,
-      resolveddate: this.appService.getDateTimeinISOFormat(this.diagnosis.resolveddate),
+      resolveddate: this.diagnosis.resolveddate?this.appService.getDateTimeinISOFormat(this.diagnosis.resolveddate):null,
       clinicalsummary_id: null,
       isdateapproximate: this.diagnosis.isdateapproximate,
       dateeffectiveperiod: this.diagnosis.isdateapproximate == 'No'?'Actual':this.diagnosis.dateeffectiveperiod,
@@ -367,9 +379,10 @@ selectedValue(diag: SNOMED) {
     await this.subscriptions.add(
       this.apiRequest.postRequest(this.postDiagnosisURI+diagnosis.person_id, diagnosis)
         .subscribe((response) => {
-         
-          this.toasterService.showToaster('success','Diagnosis added successfully.');
 
+          this.toasterService.showToaster('success','Diagnosis added successfully.');
+          this.subjects.frameworkEvent.next("UPDATE_EWS");
+          console.log('Diagnosis added and saved');
           this.globalService.resetObject();
         })
       )
@@ -391,7 +404,7 @@ selectedValue(diag: SNOMED) {
       onsetdate: this.appService.getDateTimeinISOFormat(this.diagnosis.onsetdate),
       clinicalstatus: this.diagnosis.clinicalstatus,
       verificationstatus: this.diagnosis.verificationstatus,
-      resolveddate: this.appService.getDateTimeinISOFormat(this.diagnosis.resolveddate),
+      resolveddate: this.diagnosis.resolveddate?this.appService.getDateTimeinISOFormat(this.diagnosis.resolveddate):null,
       clinicalsummary_id: null,
       isdateapproximate: this.diagnosis.isdateapproximate,
       dateeffectiveperiod: this.diagnosis.isdateapproximate == 'No'?'Actual':this.diagnosis.dateeffectiveperiod,
@@ -405,16 +418,17 @@ selectedValue(diag: SNOMED) {
         .subscribe((response) => {
 
           this.toasterService.showToaster('success','Diagnosis updated successfully.');
-
+          this.subjects.frameworkEvent.next("UPDATE_EWS");
+          console.log('Diagnosis edited and saved');
           this.globalService.resetObject();
         })
       )
       this.globalService.listDiagnosisChange.next(null);
   }
 
-  ngOnDestroy(): void {    
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.globalService.resetObject();
-  } 
+  }
 
 }

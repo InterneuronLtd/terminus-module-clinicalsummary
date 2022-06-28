@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ export class ClinicalSummaryNotesHistoryViewerService {
     dialogSize: 'sm'|'lg' = 'lg',
     ): Promise<boolean> {
 
-    const modalRef = this.modalService.open(ClinicalSummaryNotesHistoryViewerComponent, { size: dialogSize, centered: true, windowClass: 'custom-class' });
+    const modalRef = this.modalService.open(ClinicalSummaryNotesHistoryViewerComponent, { size: dialogSize, centered: true });
 
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.message = message;

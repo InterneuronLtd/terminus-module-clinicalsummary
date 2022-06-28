@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ import { AppService } from '../services/app.service';
 @Component({
   selector: 'app-history-viewer',
   templateUrl: './history-viewer.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./history-viewer.component.css']
+  styleUrls: ['./history-viewer.component.css'],
 })
 export class HistoryViewerComponent implements OnInit {
 
@@ -106,8 +105,8 @@ export class HistoryViewerComponent implements OnInit {
 
     
     this.procedure = obj;
-    console.log('obj',this.procedure);
-
+    // console.log('obj',this.procedure);
+    this.procedure.isdateapproximate = this.procedure.isdateapproximate;
     if(this.procedure.isdateapproximate == 'Yes')
     {
       this.showDateEffectivePeriod = true;
@@ -116,13 +115,17 @@ export class HistoryViewerComponent implements OnInit {
       this.procedure.dateeffectiveperiod = this.procedure.dateeffectiveperiod;
       if(this.procedure.dateeffectiveperiod == 'Month')
       {
-        this.bsConfig = {dateInputFormat: 'MMM/YYYY',containerClass: 'theme-default', adaptivePosition: true}
+        this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
         this.procedure.effectivedatestring  = new Date(this.procedure.effectivedatestring);
       }
       else{
         this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true}
         this.procedure.effectivedatestring  = new Date(this.procedure.effectivedatestring);
       }
+    }
+    else{
+      this.showDateEffectivePeriod = false;
+      this.showDatePicker = false;
     }
 
     if(!this.procedure.proceduredate)

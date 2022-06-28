@@ -1,3 +1,9 @@
-.custom-class {
-    margin-top: 50px;
-}
+::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+  ::ng-deep ngb-modal-window {
+    margin-top: 50px !important;
+  }
+
+  

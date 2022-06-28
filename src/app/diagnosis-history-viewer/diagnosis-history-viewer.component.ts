@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ import { GlobalService } from '../services/global.service';
 @Component({
   selector: 'app-diagnosis-history-viewer',
   templateUrl: './diagnosis-history-viewer.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./diagnosis-history-viewer.component.css']
+  styleUrls: ['./diagnosis-history-viewer.component.css'],
 })
 export class DiagnosisHistoryViewerComponent implements OnInit {
 
@@ -142,7 +141,7 @@ export class DiagnosisHistoryViewerComponent implements OnInit {
       this.diagnosis.dateeffectiveperiod = this.diagnosis.dateeffectiveperiod;
       if(this.diagnosis.dateeffectiveperiod == 'Month')
       {
-        this.bsConfig = {dateInputFormat: 'MMM/YYYY',containerClass: 'theme-default', adaptivePosition: true}
+        this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
         this.diagnosis.effectivedatestring  = new Date(this.diagnosis.effectivedatestring);
       }
       else{
@@ -150,6 +149,10 @@ export class DiagnosisHistoryViewerComponent implements OnInit {
         this.diagnosis.effectivedatestring  = new Date(this.diagnosis.effectivedatestring);
       }
       
+    }
+    else{
+      this.showDateEffectivePeriod = false;
+      this.showDatePicker = false;
     }
 
     if(!this.diagnosis.resolveddate)

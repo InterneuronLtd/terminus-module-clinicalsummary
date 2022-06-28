@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -32,8 +32,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from "ngx-spinner";
 import {
   BsDatepickerConfig,
-  BsDatepickerModule,
-  DatepickerModule,
+  BsDatepickerModule
 } from "ngx-bootstrap/datepicker";
 import { ModalModule, BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -67,62 +66,61 @@ import {TableModule} from 'primeng/table';
 import {DropdownModule} from 'primeng/dropdown';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ViewerComponent,
-    FakeDataContractComponent,
-    ListClinicalSummaryComponent,
-    ListDiagnosisComponent,
-    EditClinicalSummaryComponent,
-    InvestigationResultsNotesComponent,
-    ListTaskComponent,
-    ListProcedureComponent,
-    AddProcedureComponent,
-    AddTaskComponent,
-    ClinicalSummaryNotesComponent,
-    DischargePlanComponent,
-    RecentLaboratoryResultsComponent,
-    InfectionControlComponent,
-    LaboratoryResultsFishbone,
-    AddDiagnosisComponent,
-    HistoryViewerComponent,
-    DiagnosisHistoryViewerComponent,
-    TaskHistoryViewerComponent,
-    ClinicalSummaryNotesHistoryViewerComponent,
-    DischargePlanHistoryViewerComponent,
-    InvestigationResultsNotesHistoryViewerComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    DataTablesModule,
-    FormsModule,
-    NgxSpinnerModule,
-    BrowserAnimationsModule,
-    FontAwesomeModule,
-    CKEditorModule,
-    BsDatepickerModule.forRoot(),
-    DatepickerModule.forRoot(),
-    AutoCompleteModule,
-    CommonModule,
-    ToastrModule.forRoot({
-      timeOut: 10000,
-      positionClass: "toast-bottom-right",
-      preventDuplicates: true,
-    }),
-    TableModule,
-    DropdownModule
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [
-    BsModalRef,
-    BsModalService,
-    BsDatepickerConfig,
-    ConfirmationDialogService
-  ],
-  //  bootstrap: [AppComponent],  //Comment out when running build command for packaging
-   bootstrap: [], //Keep for prod build
-  entryComponents: []
+    declarations: [
+        AppComponent,
+        ViewerComponent,
+        FakeDataContractComponent,
+        ListClinicalSummaryComponent,
+        ListDiagnosisComponent,
+        EditClinicalSummaryComponent,
+        InvestigationResultsNotesComponent,
+        ListTaskComponent,
+        ListProcedureComponent,
+        AddProcedureComponent,
+        AddTaskComponent,
+        ClinicalSummaryNotesComponent,
+        DischargePlanComponent,
+        RecentLaboratoryResultsComponent,
+        InfectionControlComponent,
+        LaboratoryResultsFishbone,
+        AddDiagnosisComponent,
+        HistoryViewerComponent,
+        DiagnosisHistoryViewerComponent,
+        TaskHistoryViewerComponent,
+        ClinicalSummaryNotesHistoryViewerComponent,
+        DischargePlanHistoryViewerComponent,
+        InvestigationResultsNotesHistoryViewerComponent
+    ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        DataTablesModule,
+        FormsModule,
+        NgxSpinnerModule,
+        BrowserAnimationsModule,
+        FontAwesomeModule,
+        CKEditorModule,
+        BsDatepickerModule.forRoot(),
+        AutoCompleteModule,
+        CommonModule,
+        ToastrModule.forRoot({
+            timeOut: 10000,
+            positionClass: "toast-bottom-right",
+            preventDuplicates: true,
+        }),
+        TableModule,
+        DropdownModule
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    providers: [
+        BsModalRef,
+        BsModalService,
+        BsDatepickerConfig,
+        ConfirmationDialogService
+    ],
+    //  bootstrap: [AppComponent],  //Comment out when running build command for packaging
+    bootstrap: [],
+    entryComponents: []
 })
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {

@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ import { AppService } from '../services/app.service';
 @Component({
   selector: 'app-investigation-results-notes-history-viewer',
   templateUrl: './investigation-results-notes-history-viewer.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./investigation-results-notes-history-viewer.component.css']
+  styleUrls: ['./investigation-results-notes-history-viewer.component.css'],
 })
 export class InvestigationResultsNotesHistoryViewerComponent implements OnInit {
 

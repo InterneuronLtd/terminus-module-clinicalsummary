@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -38,8 +38,7 @@ import { CoreProvider } from '../models/entities/core-provider.model';
 @Component({
   selector: 'app-add-procedure',
   templateUrl: './add-procedure.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./add-procedure.component.css']
+  styleUrls: ['./add-procedure.component.css'],
 })
 export class AddProcedureComponent implements OnInit {
 
@@ -52,7 +51,7 @@ export class AddProcedureComponent implements OnInit {
 
   clinicalSummaryProcedures: CoreProcedure[] = [];
   assistants: CoreProvider[] = [];
-  providers: CoreProvider[] = []; 
+  providers: CoreProvider[] = [];
   procedures: CoreProcedure;
 
   //Date Picker Models
@@ -64,6 +63,7 @@ export class AddProcedureComponent implements OnInit {
   results: SNOMED[] = [];
   resultsReactions: SNOMED[] = [];
   procedureName: string;
+  showAlert: boolean = false;
 
   otherConcept: TerminologyConcept = {
       concept_id: 9177,
@@ -92,15 +92,15 @@ export class AddProcedureComponent implements OnInit {
 
   @Input() set operationProcedure(value: CoreProcedure) {
     this.procedures = value;
-    
+
   }
 
   constructor(private activeModal: NgbActiveModal,
-    private apiRequest: ApirequestService, 
+    private apiRequest: ApirequestService,
     public appService: AppService,
     public globalService: GlobalService,
     private toasterService: ToasterService,
-    private subjects: SubjectsService, ) { 
+    private subjects: SubjectsService, ) {
 
       this.subjects.personIdChange.subscribe( () => {
         if(!this.appService.personId) {
@@ -118,7 +118,7 @@ export class AddProcedureComponent implements OnInit {
         if(value)
         {
           this.appService.clinicalsummaryId = value;
-        } 
+        }
       });
 
       this.procedure = {} as Procedure;
@@ -138,14 +138,14 @@ export class AddProcedureComponent implements OnInit {
       this.procedure.proceduremodifiercode = null;
       this.procedure.proceduremodifiertext = null;
       this.procedure.isdateapproximate = 'No';
-      this.procedure.dateeffectiveperiod = null;
+      this.procedure.dateeffectiveperiod = 'Month';
       this.procedure._createdby = this.appService.loggedInUserName;
       this.procedure._createddate = new Date(this.globalService.getDateTime());
     }
 
   ngOnInit(): void {
     // this.bsConfig = {  dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default', adaptivePosition: true };
-  
+
     this.subscriptions.add(
       this.apiRequest
         .getRequest(
@@ -153,7 +153,12 @@ export class AddProcedureComponent implements OnInit {
         .subscribe((response) => {
           var data = JSON.parse(response);
           this.providers = data;
-
+          this.providers.map((a) => {
+            a.firstname = (a.firstname == null || a.firstname == '')?'':a.firstname+' ';
+            a.middlename = (a.middlename == null || a.middlename == '')?'':a.middlename+' ';
+            a.lastname = (a.lastname == null || a.lastname == '')?'':a.lastname;
+            a.displayname = a.lastname+', '+a.firstname;
+          });
         })
     );
 
@@ -169,7 +174,7 @@ export class AddProcedureComponent implements OnInit {
           this.procedure = data.reverse();
 
           this.procedureName = data[0].name;
-          
+
          this.procedure.name = '{"_term":"'+data[0].name.replace(/"/g,'\\"')+'","_code":"'+data[0].code+'","bindingValue":"'+data[0].code+' | '+data[0].name.replace(/"/g,'\\"')+'","fsn":"'+data[0].name.replace(/"/g,'\\"')+' (disorder)","level":0,"parentCode":null}';
           // console.log('procedure name' ,this.procedure.name);
          this.procedure.name = <SNOMED>JSON.parse(this.procedure.name);
@@ -181,17 +186,20 @@ export class AddProcedureComponent implements OnInit {
           {
             this.showDateEffectivePeriod = true;
             this.showDatePicker = true;
-            
+
             this.procedure.dateeffectiveperiod = data[0].dateeffectiveperiod;
             if(data[0].dateeffectiveperiod == 'Month')
             {
-              this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
+              this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
               this.procedure.effectivedatestring  = new Date(data[0].effectivedatestring);
             }
             else{
-              this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true}
+              this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
               this.procedure.effectivedatestring  = new Date(data[0].effectivedatestring);
             }
+          }
+          else{
+            this.procedure.dateeffectiveperiod = 'Month';
           }
         })
       )
@@ -238,15 +246,19 @@ export class AddProcedureComponent implements OnInit {
             if (resultsFromDb.length == 0) {
                 let concept: SNOMED = new SNOMED();
                 concept.code = this.otherConcept.conceptcode;
-                concept.term = event.query + ' (Other)';
-
+                concept.term = event.query + ' (Not a codified value)';
+                this.showAlert = true;
                 resultsFromDb.push(concept);
             }
+            else{
+              this.showAlert = false;
+            }
+
             this.results = resultsFromDb;
         })
     );
     }
-    
+
 }
 
 selectedValue(event) {
@@ -262,7 +274,7 @@ selectedValue(event) {
         else {
             addedProcs = this.clinicalSummaryProcedures.filter(x => x.code == event.code);
         }
-        
+
         if (addedProcs.length == 0) {
             let procedure: CoreProcedure = new CoreProcedure();
 
@@ -271,8 +283,13 @@ selectedValue(event) {
             procedure.code = event.code;
             procedure.name = event.term;
 
-            this.clinicalSummaryProcedures.push(procedure);            
+            this.clinicalSummaryProcedures[0] = procedure ;
         }
+  }
+
+  clearSelectedProcedure() {
+    this.procedure.name = null;
+    this.procedure.code = null;
   }
 
   unSelectedValue(event) {
@@ -280,17 +297,22 @@ selectedValue(event) {
   }
 
   searchAssistant(event) {
-    // console.log('event',event);
-      let regex = new RegExp(event.query, 'gi');
+    const result = /^(?=.*\S).+$/.test(event.query.trim());
+    if(result)
+    {
+      // console.log('event',event);
+      let regex = new RegExp('^'+event.query.trim(), 'i');
       this.assistants = this.providers.filter(
-          x => (x.firstname+' '+x.middlename+' '+x.lastname).match(regex)
+          x => (x.displayname).match(regex)
       );
 
+      this.assistants = this.assistants.sort((a,b) => a.displayname.localeCompare(b.displayname));
+    }
   }
 
   selectedAssistant(event) {
     // console.log('event',event);
-    this.procedure.performedby = event.firstname;
+    this.procedure.performedby = event.displayname;
     // this.assistants = [];
     // this.assistants.push(event);
   }
@@ -303,6 +325,8 @@ selectedValue(event) {
   selectApproximateDate()
   {
     // console.log('callled', this.diagnosis.isdateapproximate);
+    this.showDatePicker = true;
+    this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     if(this.procedure.isdateapproximate == 'Yes')
     {
       this.showDateEffectivePeriod = true;
@@ -318,11 +342,11 @@ selectedValue(event) {
     if(this.procedure.dateeffectiveperiod == 'Month')
     {
       this.showDatePicker = true;
-      this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true}
+      this.bsConfig = {dateInputFormat: 'MMMM YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     }
     else{
       this.showDatePicker = true;
-      this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true}
+      this.bsConfig = {dateInputFormat: 'YYYY',containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false}
     }
   }
 
@@ -331,20 +355,19 @@ selectedValue(event) {
     {
       container.monthSelectHandler = (event: any): void => {
         container._store.dispatch(container._actions.select(event.date));
-      };     
+      };
       container.setViewMode('month');
     }
     else{
       container.monthSelectHandler = (event: any): void => {
         container._store.dispatch(container._actions.select(event.date));
-      };     
+      };
       container.setViewMode('year');
     }
    }
 
   async addProcedure()
   {
-
     let procedure = {
       procedure_id: String(Guid.create()),
       proceduredate: this.appService.getDateTimeinISOFormat(this.procedure.proceduredate),
@@ -373,10 +396,13 @@ selectedValue(event) {
     await this.subscriptions.add(
       this.apiRequest.postRequest(this.postProcedureURI+procedure.person_id, procedure)
         .subscribe((response) => {
-         
-          this.toasterService.showToaster('success','Procedure added successfully.');
 
+          this.toasterService.showToaster('success','Procedure added successfully.');
+          this.subjects.frameworkEvent.next("UPDATE_EWS");
+          console.log('Procedure added and saved');
           this.globalService.resetObject();
+
+
         })
       )
       this.globalService.listProcedureChange.next(null);
@@ -418,20 +444,21 @@ selectedValue(event) {
         .subscribe((response) => {
 
           this.toasterService.showToaster('success','Procedure updated successfully.');
-
+          this.subjects.frameworkEvent.next("UPDATE_EWS");
+          console.log('Procedure edited and saved');
           this.globalService.resetObject();
         })
       )
       setTimeout(() => {
         this.globalService.listProcedureChange.next(null);
       }, 1000);
-      
-  }
-  
 
-  ngOnDestroy(): void {    
+  }
+
+
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.globalService.resetObject();
-  } 
+  }
 
 }

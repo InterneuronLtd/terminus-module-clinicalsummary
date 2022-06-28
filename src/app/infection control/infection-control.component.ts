@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ export class InfectionControlComponent implements OnInit {
   selectedClinicalSummaryView: string;
   clinicalSummaryList: any;
   refreshingList: boolean;
- 
 
- 
+
+
   observationSet: any;
   crpSet: any;
   microbiologyReportSet: any;
@@ -71,10 +71,10 @@ export class InfectionControlComponent implements OnInit {
   };
 
   constructor(private apiRequest: ApirequestService,
-    public appService: AppService, 
+    public appService: AppService,
     private subjects: SubjectsService,
     public globalService: GlobalService,
-    private toasterService: ToasterService,) { 
+    private toasterService: ToasterService,) {
 
 
     this.subjects.personIdChange.subscribe( () => {
@@ -87,12 +87,12 @@ export class InfectionControlComponent implements OnInit {
       if(value)
       {
         this.appService.clinicalsummaryId = value;
-      } 
+      }
     });
   }
 
   ngOnInit(): void {
-  
+
   }
 
   async initialiseFunctions()
@@ -114,14 +114,17 @@ export class InfectionControlComponent implements OnInit {
         {
           this.epmaPrescription = [];
           this.observationSet = JSON.parse(response[0]);
+          // console.log('this.observationSet',this.observationSet);
           this.crpSet = JSON.parse(response[1]);
+          // console.log('this.crpSet',this.crpSet);
           this.microbiologyReportSet = JSON.parse(response[2]);
+          // console.log('this.microbiologyReportSet',this.microbiologyReportSet);
           if(this.microbiologyReportSet.length > 0)
           {
             this.microbiologyReportSet[0].content = this.microbiologyReportSet[0].content.replace(/<[^>]*>/g, ' ');
           }
-                
-          if(this.observationSet.length && this.crpSet.length && this.microbiologyReportSet.length)
+
+          if(this.observationSet.length == 0 && this.crpSet.length == 0 && this.microbiologyReportSet.length == 0)
           {
             this.observationSetText = true;
           }
@@ -131,74 +134,199 @@ export class InfectionControlComponent implements OnInit {
           {
             this.medicationSetText = true;
           }
-          // console.log('medicationSet',medicationSet);
-          medicationSet.forEach(element => {
-            let medications = JSON.parse(element.__medications);
-            let posology = JSON.parse(element.__posology);
-            let routes = JSON.parse(element.__routes);
-            let med = medications.find(x => x.isprimary == true);
-            let epmaPrescriptionData = new EpmaPrescription();
 
-            if(med.isantimicrobial || med.name.indexOf('Paracetamol') != -1 || med.name.indexOf('Antimicrobial') != -1)
+          // console.log('medicationSet',medicationSet);
+          let antimicrobialTrue = [];
+          let antimicrobialFalse = [];
+          let sortedMedicationData = [];
+          medicationSet.forEach(element => {
+            let medications = JSON.parse(element.__medications).find(x => x.isprimary == true);
+            let posology = JSON.parse(element.__posology).find(x => x.iscurrent == true);
+            let routes = JSON.parse(element.__routes);
+            // console.log('medications',medications)
+            // console.log('posology',posology)
+            if(medications.isantimicrobial == true)
             {
-              epmaPrescriptionData.name = med.name;
-              epmaPrescriptionData.route = routes.find(x => x.isdefault == true).route;
-              epmaPrescriptionData.startDate = posology.prescriptionstartdate;
-              epmaPrescriptionData.endDate = posology.prescriptionenddate; // check the null for end date
-              if(posology.infusiontypeid)
+              if(antimicrobialTrue.indexOf(medications.medication_id) == -1) {
+                antimicrobialTrue.push({'medication':medications,'posology':posology,'routes':routes,'startdatetime':element.startdatetime,'lastmodifiedon':element.lastmodifiedon});
+              }
+            }
+            else{
+              if(antimicrobialFalse.indexOf(medications.medication_id) == -1) {
+                antimicrobialFalse.push({'medication':medications,'posology':posology,'routes':routes,'startdatetime':element.startdatetime,'lastmodifiedon':element.lastmodifiedon});
+              }
+            }
+            sortedMedicationData = antimicrobialTrue.concat(antimicrobialFalse)
+          });
+
+          sortedMedicationData.forEach(element =>{
+            let epmaPrescriptionData = new EpmaPrescription();
+            // console.log('element',element.medication.name);
+            epmaPrescriptionData.name = element.medication.name;
+
+            if(element.routes.length != 0)
+            {
+              epmaPrescriptionData.route = element.routes.find(x => x.isdefault == true).route;
+            }
+
+            epmaPrescriptionData.startDate = element.posology.prescriptionstartdate;  //element.startdatetime;
+            //CS-126 RNOH - Infection Control: Prescription "From" date is showing in the "Modified From" column
+            epmaPrescriptionData.modifiedFromDate = element.posology.prescriptionstartdate?'':element.posology.prescriptionstartdate;
+            epmaPrescriptionData.endDate = element.posology.prescriptionenddate; // check the null for end date
+
+            if(element.posology.infusiontypeid)
+            {
+              // if(element.posology.frequency != 'variable' && element.posology.frequency != 'protocol')
+              // {
+              //   epmaPrescriptionData.dosage = element.posology.infusionrate;
+              //   epmaPrescriptionData.units = element.posology.infusionrateunits;
+              // }
+              // else{
+              //   epmaPrescriptionData.dosage = element.posology.frequency;
+              //   epmaPrescriptionData.units = '';
+              // }
+
+              if(element.posology.dosetype == 'units')
               {
-                if(posology.frequency != 'variable' && posology.frequency != 'protocol')
+                if(element.posology.__dose[0].dosestrength != null && element.posology.__dose[0].dosestrength != 0)
                 {
-                  epmaPrescriptionData.dosage = posology.infusionrate;
-                  epmaPrescriptionData.units = posology.infusionrateunits;
+                  if(element.posology.__dose[0].dosestrengthrangemax != null && element.posology.__dose[0].dosestrengthrangemax != 0)
+                  {
+                    epmaPrescriptionData.dosage = element.posology.__dose[0].dosestrength + '-' + element.posology.__dose[0].dosestrengthrangemax;
+                    epmaPrescriptionData.units = element.posology.__dose[0].dosestrengthunits;
+                  }
+                  else{
+                    epmaPrescriptionData.dosage = element.posology.__dose[0].dosestrength;
+                    epmaPrescriptionData.units = element.posology.__dose[0].dosestrengthunits;
+                  }
                 }
                 else{
-                  epmaPrescriptionData.dosage = posology.frequency;
+                  if(element.posology.__dose[0].dosesizerangemax != null && element.posology.__dose[0].dosesizerangemax != 0)
+                  {
+                    epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize + '-' + element.posology.__dose[0].dosesizerangemax;
+                    epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+                  }
+                  else{
+                    epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize;
+                    epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+                  }
+                }
+                // epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize;
+                // epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+              }
+
+              if(element.posology.dosetype == 'strength')
+              {
+                epmaPrescriptionData.dosage = element.posology.__dose[0].strengthneumerator;
+                epmaPrescriptionData.units = element.posology.__dose[0].strengthneumeratorunit;
+              }
+
+              if(element.posology.dosetype == 'descriptive')
+              {
+                epmaPrescriptionData.dosage = element.posology.__dose[0].descriptivedose;
+                epmaPrescriptionData.units = '';
+              }
+            }
+            else{
+              if(element.posology.frequency != 'variable' && element.posology.frequency != 'protocol')
+              {
+                if(element.posology.dosetype == 'units')
+                {
+                  if(element.posology.__dose[0].dosestrength != null && element.posology.__dose[0].dosestrength != 0)
+                  {
+                    if(element.posology.__dose[0].dosestrengthrangemax != null && element.posology.__dose[0].dosestrengthrangemax != 0)
+                    {
+                      epmaPrescriptionData.dosage = element.posology.__dose[0].dosestrength + '-' + element.posology.__dose[0].dosestrengthrangemax;
+                      epmaPrescriptionData.units = element.posology.__dose[0].dosestrengthunits;
+                    }
+                    else{
+                      epmaPrescriptionData.dosage = element.posology.__dose[0].dosestrength;
+                      epmaPrescriptionData.units = element.posology.__dose[0].dosestrengthunits;
+                    }
+                  }
+                  else{
+                    if(element.posology.__dose[0].dosesizerangemax != null && element.posology.__dose[0].dosesizerangemax != 0)
+                    {
+                      epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize + '-' + element.posology.__dose[0].dosesizerangemax;
+                      epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+                    }
+                    else{
+                      epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize;
+                      epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+                    }
+                  }
+                  // epmaPrescriptionData.dosage = element.posology.__dose[0].dosesize;
+                  // epmaPrescriptionData.units = element.posology.__dose[0].doseunit;
+                }
+
+                if(element.posology.dosetype == 'strength')
+                {
+                  epmaPrescriptionData.dosage = element.posology.__dose[0].strengthneumerator;
+                  epmaPrescriptionData.units = element.posology.__dose[0].strengthneumeratorunit;
+                }
+
+                if(element.posology.dosetype == 'descriptive')
+                {
+                  epmaPrescriptionData.dosage = element.posology.__dose[0].descriptivedose;
                   epmaPrescriptionData.units = '';
                 }
+
               }
               else{
-                if(posology.frequency != 'variable' && posology.frequency != 'protocol')
-                {
-                  if(posology.dosetype == 'units')
-                  {
-                    epmaPrescriptionData.dosage = posology.__dose[0].dosesize;
-                    epmaPrescriptionData.units = posology.__dose[0].doseunit;
-                  }
-
-                  if(posology.dosetype == 'strength')
-                  {
-                    epmaPrescriptionData.dosage = posology.__dose[0].strengthneumerator;
-                    epmaPrescriptionData.units = posology.__dose[0].strengthneumeratorunit;
-                  }
-
-                  if(posology.dosetype == 'descriptive')
-                  {
-                    epmaPrescriptionData.dosage = posology.__dose[0].descriptivedose;
-                    epmaPrescriptionData.units = '';
-                  }
-                  
-                }
-                else{
-                  epmaPrescriptionData.dosage = posology.frequency;
-                  epmaPrescriptionData.units = '';
-                }
+                epmaPrescriptionData.dosage = element.posology.frequency;
+                epmaPrescriptionData.units = '';
               }
-
-              if(posology.frequency == 'x')
-              {
-                epmaPrescriptionData.timesperday = posology.frequencysize;
-              }
-              
-              this.epmaPrescription.push(epmaPrescriptionData);
             }
-              
+
+            if(element.posology.prn == true)
+            {
+              epmaPrescriptionData.timesperday = 'PRN';
+            }
+            else{
+              epmaPrescriptionData.frequency = element.posology.frequency;
+              epmaPrescriptionData.infusiontypeid = element.posology.infusiontypeid;
+              if(element.posology.frequency == 'x')
+              {
+                epmaPrescriptionData.timesperday = element.posology.frequencysize;
+              }
+              else if(element.posology.frequency == 'h')
+              {
+                epmaPrescriptionData.timesperday = element.posology.frequencysize;
+              }
+              else if(element.posology.frequency == 'stat')
+              {
+                epmaPrescriptionData.timesperday = 'STAT';
+              }
+              else if(element.posology.frequency == 'variable' && element.posology.infusiontypeid == 'ci')
+              {
+                epmaPrescriptionData.timesperday = element.posology.frequency + ' ' + 'Continuous Infusion';
+              }
+              else if(element.posology.frequency == 'variable')
+              {
+                epmaPrescriptionData.timesperday = element.posology.frequency;
+              }
+              else if(element.posology.frequency == 'protocol')
+              {
+                epmaPrescriptionData.timesperday = element.posology.frequency;
+              }
+              else if(element.posology.infusiontypeid == 'ci')
+              {
+                epmaPrescriptionData.timesperday = 'Continuous Infusion';
+              }
+              else{
+                epmaPrescriptionData.timesperday = '1';
+              }
+            }
+
+            this.epmaPrescription.push(epmaPrescriptionData);
           });
+
+          // console.log('epmaPrescription',this.epmaPrescription);
 
           this.refreshingList = false;
         }
-        
-        
+
+
       })
     )
 
@@ -216,7 +344,11 @@ export class EpmaPrescription {
   public units: string;
   public route: any;
   public timesperday: string;
+  public fromDate: Date;
   public startDate: Date;
   public endDate: any;
+  public modifiedFromDate: any;
+  public frequency: any;
+  public infusiontypeid: any;
 }
 

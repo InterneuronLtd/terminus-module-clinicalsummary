@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import { ToasterService } from '../services/toaster-service.service';
 import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
 import { TaskHistoryViewerComponent } from '../task-history-viewer/task-history-viewer.component';
 import { TaskHistoryViewerService } from '../task-history-viewer/task-history-viewer.service';
-
+import { SortEvent } from 'primeng/api';
 @Component({
   selector: 'app-list-task',
   templateUrl: './list-task.component.html',
@@ -204,6 +204,15 @@ export class ListTaskComponent implements OnInit {
     else {
     }
   }
+
+  customSort(event: SortEvent) {
+    // console.log('event',event);
+    event.data.sort((data1, data2) => {
+        let result = -1;
+            
+        return (result);
+    });
+}
 
   refresh() {
   }

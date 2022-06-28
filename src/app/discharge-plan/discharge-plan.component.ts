@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Person } from '../models/entities/core-person.model';
 import { ApirequestService } from '../services/apirequest.service';
@@ -34,7 +34,7 @@ import * as ClassicEditor from 'src/assets/stylekit/ckeditor.js';
 @Component({
   selector: 'app-discharge-plan',
   templateUrl: './discharge-plan.component.html',
-  styleUrls: ['./discharge-plan.component.css']
+  styleUrls: ['./discharge-plan.component.css'],
 })
 export class DischargePlanComponent implements OnInit {
 
@@ -47,7 +47,7 @@ export class DischargePlanComponent implements OnInit {
   saving: boolean = false;
 
   selectedClinicalSummaryView: string;
-  
+
   getDischargePlanURI: string;
   dischargePlan: any;
   dischargePlanNotes: any = '';
@@ -58,7 +58,7 @@ export class DischargePlanComponent implements OnInit {
   postDischargePlanNotesURI: string = this.appService.carerecorduri + "/ClinicalSummary/PostDischargePlan/";
 
   @Input() set personData(value: Person) {
-    
+
     this.saving = false;
     this.personId = value.person_id;
     this.selectedClinicalSummaryView = "list clinical summary";
@@ -66,7 +66,7 @@ export class DischargePlanComponent implements OnInit {
 
     this.getDischargePlanURI = this.appService.carerecorduri + '/ClinicalSummary/GetDischargePlan/';
     this.initialiseFunctions();
-    
+
   };
 
   constructor(private apiRequest: ApirequestService,
@@ -85,7 +85,7 @@ export class DischargePlanComponent implements OnInit {
         if(value)
         {
           this.appService.clinicalsummaryId = value;
-        } 
+        }
       });
     }
 
@@ -114,10 +114,10 @@ export class DischargePlanComponent implements OnInit {
         else{
           this.dischargePlan = JSON.parse(response)[0];
           this.dischargePlanNotes = JSON.parse(response)[0].dischargeplannotes;
-          
+
           this.refreshingList = false;
         }
-          
+
       })
     )
   }
@@ -156,7 +156,9 @@ export class DischargePlanComponent implements OnInit {
             this.toasterService.showToaster('success','Discharge Plan added successfully.')
 
             this.globalService.resetObject();
-            
+
+            this.subjects.frameworkEvent.next("UPDATE_EWS");
+
           })
         )
     }
@@ -176,10 +178,10 @@ export class DischargePlanComponent implements OnInit {
       // await this.getSelectedFormWithContext();
       }
     // }
-    
+
   }
 
-  ngOnDestroy(): void {    
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-  }  
+  }
 }

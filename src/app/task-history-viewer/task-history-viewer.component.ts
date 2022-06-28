@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ import { Task } from '../models/entities/task.model';
 @Component({
   selector: 'app-task-history-viewer',
   templateUrl: './task-history-viewer.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./task-history-viewer.component.css']
+  styleUrls: ['./task-history-viewer.component.css'],
 })
 export class TaskHistoryViewerComponent implements OnInit {
 

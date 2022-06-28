@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ import { AppService } from '../services/app.service';
 @Component({
   selector: 'app-discharge-plan-history-viewer',
   templateUrl: './discharge-plan-history-viewer.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./discharge-plan-history-viewer.component.css']
+  styleUrls: ['./discharge-plan-history-viewer.component.css'],
 })
 export class DischargePlanHistoryViewerComponent implements OnInit {
 

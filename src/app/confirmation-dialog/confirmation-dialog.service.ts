@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
+import { CommonModule } from '@angular/common';  
 
 @Injectable()
 export class ConfirmationDialogService {
@@ -31,17 +32,20 @@ export class ConfirmationDialogService {
   constructor(private modalService: NgbModal) { }
 
   public confirm(
+    owner: string,
     title: string,
     message: string,
     btnOkText: string = 'Yes',
     btnCancelText: string = 'No',
+    btnYesText: string = 'Ok',
     dialogSize: 'sm'|'lg' = 'sm'): Promise<boolean> {
     const modalRef = this.modalService.open(ConfirmationDialogComponent, { size: dialogSize, centered: true });
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.message = message;
+    modalRef.componentInstance.owner = owner;
+    modalRef.componentInstance.btnYesText = btnYesText;
     modalRef.componentInstance.btnOkText = btnOkText;
     modalRef.componentInstance.btnCancelText = btnCancelText;
-
     return modalRef.result;
   }
 

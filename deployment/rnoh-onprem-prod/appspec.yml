@@ -1,0 +1,24 @@
+version: 0.0
+os: windows
+files:
+  - source: /dist/terminus-clinical-summary/assets
+    destination: \\sp1-cpweb-01\c$\inetpub\wwwroot\terminus\assets
+  - source: /dist/terminus-clinical-summary/assets
+    destination: \\sd1-cpweb-01\c$\inetpub\wwwroot\terminus\assets
+  - source: clinicalsummary.js
+    destination: \\sp1-cpweb-01\c$\inetpub\wwwroot\terminusmoduleloader\scripts\clinicalsummary\
+  - source: clinicalsummary.js
+    destination: \\sd1-cpweb-01\c$\inetpub\wwwroot\terminusmoduleloader\scripts\clinicalsummary\
+hooks:
+  ApplicationStop:
+    - location: scripts\application-stop.ps1
+      timeout: 200
+  BeforeInstall:
+    - location: scripts\before-install.ps1
+      timeout: 500
+  AfterInstall:
+    - location: scripts\after-install.ps1
+      timeout: 500
+  ApplicationStart:
+    - location: scripts\application-start.ps1
+      timeout: 200

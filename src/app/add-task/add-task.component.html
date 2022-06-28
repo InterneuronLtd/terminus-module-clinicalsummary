@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2021  Interneuron CIC
+Copyright(C) 2022  Interneuron CIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
   
     <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
       <!-- <span aria-hidden="true">&times;</span> -->
-      <img src="assets/images/clinicalsummary/closeIcon.svg">
+      <img src="assets/images/clinicalsummary/closeIcon.svg" height="18px">
     </button>
   </div>
   <div class="modal-body">
@@ -42,10 +42,10 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="form-group">
                       <label for="taskname">Task:</label>
                       <div class="input-group">
-                        <input class="form-control" type="text" name="taskname" id="taskname" required
-                         [ngClass]="{ 'is-invalid': taskname.invalid }" [(ngModel)]="task.taskname" #taskname="ngModel">
+                        <input class="form-control" type="text" name="taskname" id="taskname" required (keyup)="handleInput($event);"
+                         [ngClass]="{ 'is-invalid': taskname.invalid || disabledSaveButton }" [(ngModel)]="task.taskname" #taskname="ngModel">
                       </div>
-                      <div [hidden]="taskname.valid" class="text-danger">
+                      <div [hidden]="taskname.valid && !disabledSaveButton" class="text-danger">
                         <i>Task name is required</i>
                       </div>
                     </div>
@@ -53,11 +53,8 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="form-group">
                         <label for="taskdetails">Task Details:</label>
                         <div class="input-group">
-                            <textarea class="form-control" name="taskdetails" id="taskdetails" required
-                            [(ngModel)]="task.taskdetails" #taskdetails="ngModel" [ngClass]="{ 'is-invalid': taskdetails.invalid }"></textarea>
-                        </div>
-                        <div [hidden]="taskdetails.valid" class="text-danger">
-                          <i>Task details is required</i>
+                            <textarea class="form-control" name="taskdetails" id="taskdetails"
+                            [(ngModel)]="task.taskdetails" #taskdetails="ngModel"></textarea>
                         </div>
                     </div>
 
@@ -83,11 +80,11 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="duedate">Due date:</label>
+                                <label for="duedate">Due date: </label>
                                 <div class="input-group">
                                 <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker
-                                    id="duedate" name="duedate" [(ngModel)]="task.duedate" #duedate="ngModel"
-                                    [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true }" aria-describedby="duedate" (keydown)="false">
+                                    id="duedate" name="duedate" [(ngModel)]="task.duedate" #duedate="ngModel" [minDate]="(task._createddate > maxDateValue)?maxDateValue:task._createddate"
+                                    [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false }" aria-describedby="duedate" (keydown)="false">
                                 </div>
                             </div>
                         </div>
@@ -100,15 +97,15 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                             <div class="input-group">
                               <!-- <input class="form-control"  type="text" name="allocatedto" [(ngModel)]="task.allocatedto"> -->
                               <p-autoComplete name="allocatedto" [suggestions]="assistants" autoCompleteValidation (completeMethod)="searchAssistant($event)" (onSelect)="selectedAssistant($event)" [multiple]="false"
-                              (onUnselect)="unSelectedAssistant($event)" [minLength]="1" [maxlength]="255" [(ngModel)]="task.allocatedto" #allocatedto="ngModel">
+                              (onUnselect)="unSelectedAssistant($event)" [minLength]="3" [maxlength]="255" [(ngModel)]="task.allocatedto" #allocatedto="ngModel">
                                     <ng-template let-assistants pTemplate="item">
                                         <div class="ui-helper-clearfix">
-                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.firstname }}</div>
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.displayname }}</div>
                                         </div>
                                     </ng-template>
                                     <ng-template let-assistants pTemplate="selectedItem">
                                         <div>
-                                            {{ assistants.firstname }}
+                                            {{ assistants.displayname }}
                                         </div>
                                     </ng-template>
                                 </p-autoComplete>
@@ -119,9 +116,11 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                         <div class="col-md-6">
                           <div class="form-group">
                             <label for="recordedby">Owner:</label>
-                            <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
+                            <!-- <span class="form-control text-secondary bg-light" style="font-style: italic;font-weight:bold;">
                               {{task.owner}}
-                            </span>
+                            </span> -->
+                            <input class="form-control" type="text" name="owner" id="owner" required
+                            [(ngModel)]="task.owner" #taskname="ngModel">
                           </div>
                         </div>
                       </div>
@@ -156,7 +155,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button class="btn btn-secondary text-white btn-block" 
+                          <button class="btn btn-light text-dark btn-block" 
                             (click)="dismiss()">
                             Cancel
                           </button>
@@ -164,14 +163,14 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button *ngIf="!taskId" class="btn btn-info text-white btn-block" 
-                            [disabled]="!addTaskForm.form.valid" (click)="addTask()">
-                                Save
+                          <button *ngIf="!taskId" style="float:right;" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addTaskForm.form.valid || disabledSaveButton" (click)="addTask()">
+                                Save 
                             </button>
 
-                            <button *ngIf="taskId" class="btn btn-info text-white btn-block" 
-                            [disabled]="!addTaskForm.form.valid" (click)="editTask()">
-                                Save
+                            <button *ngIf="taskId" style="float:right;" class="btn btn-info text-white btn-block" 
+                            [disabled]="!addTaskForm.form.valid || disabledSaveButton" (click)="editTask()">
+                                Save 
                             </button>
                         </div>
                       </div>

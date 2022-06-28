@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 // import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { AppService } from '../services/app.service';
@@ -38,7 +38,7 @@ import * as ClassicEditor from 'src/assets/stylekit/ckeditor.js';
 @Component({
   selector: 'app-investigation-results-notes',
   templateUrl: './investigation-results-notes.component.html',
-  styleUrls: ['./investigation-results-notes.component.css']
+  styleUrls: ['./investigation-results-notes.component.css'],
 })
 export class InvestigationResultsNotesComponent implements OnInit {
 
@@ -50,12 +50,12 @@ export class InvestigationResultsNotesComponent implements OnInit {
   selectedClinicalSummaryView: string;
   clinicalSummaryList: any;
   refreshingList: boolean;
-  
+
 
   epmaPrescription: any[];
   showCancelSaveButtons: boolean = false;
 
-  @ViewChild('canvas', { static: true }) 
+  @ViewChild('canvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
 
   private ctx: CanvasRenderingContext2D;
@@ -83,11 +83,11 @@ export class InvestigationResultsNotesComponent implements OnInit {
   };
 
   constructor(private apiRequest: ApirequestService,
-    public appService: AppService, 
+    public appService: AppService,
     private subjects: SubjectsService,
     public globalService: GlobalService,
     private toasterService: ToasterService,
-    public investigationResultsNotesHistoryViewerService: InvestigationResultsNotesHistoryViewerService) { 
+    public investigationResultsNotesHistoryViewerService: InvestigationResultsNotesHistoryViewerService) {
 
       this.Editor.defaultConfig = {
         toolbar: {
@@ -119,12 +119,12 @@ export class InvestigationResultsNotesComponent implements OnInit {
       if(value)
       {
         this.appService.clinicalsummaryId = value;
-      } 
+      }
     });
   }
 
   ngOnInit(): void {
-    
+
   }
 
   async initialiseFunctions()
@@ -134,7 +134,7 @@ export class InvestigationResultsNotesComponent implements OnInit {
     }, 1000);
   }
 
- 
+
 
   async getInvestigation()
   {
@@ -151,8 +151,8 @@ export class InvestigationResultsNotesComponent implements OnInit {
         else{
           this.investigationResultNotes= JSON.parse(response)[0];
           this.investigationNotes = JSON.parse(response)[0].clinicalinvestigationnotes;
-        }    
-        
+        }
+
       })
     )
   }
@@ -191,7 +191,9 @@ export class InvestigationResultsNotesComponent implements OnInit {
             this.toasterService.showToaster('success','Investigation Notes added successfully.')
 
             this.globalService.resetObject();
-            
+
+            this.subjects.frameworkEvent.next("UPDATE_EWS");
+
           })
         )
     }
@@ -211,7 +213,7 @@ export class InvestigationResultsNotesComponent implements OnInit {
       // await this.getSelectedFormWithContext();
       }
     // }
-    
+
   }
 
   ngOnDestroy(): void {

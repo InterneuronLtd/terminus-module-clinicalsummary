@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Person } from '../models/entities/core-person.model';
 import { ApirequestService } from '../services/apirequest.service';
@@ -34,7 +34,7 @@ import * as ClassicEditor from 'src/assets/stylekit/ckeditor.js';
 @Component({
   selector: 'app-clinical-summary-notes',
   templateUrl: './clinical-summary-notes.component.html',
-  styleUrls: ['./clinical-summary-notes.component.css']
+  styleUrls: ['./clinical-summary-notes.component.css'],
 })
 export class ClinicalSummaryNotesComponent implements OnInit {
 
@@ -58,21 +58,22 @@ export class ClinicalSummaryNotesComponent implements OnInit {
     this.selectedClinicalSummaryView = "list clinical summary";
     this.getClinicalSummaryNotesURI = this.appService.carerecorduri + '/ClinicalSummary/GetClinicalSummaryNote/';
     this.initialiseFunctions();
-  
+
   };
 
   constructor(private apiRequest: ApirequestService,
-    public appService: AppService, 
+    public appService: AppService,
     public globalService: GlobalService,
     private toasterService: ToasterService,
+    private subjects: SubjectsService,
     public clinicalSummaryNotesHistoryViewerService: ClinicalSummaryNotesHistoryViewerService) {
       this.clinicalSummaryChange = this.globalService.clnicalSummaryChange.subscribe(value => {
         if(value)
         {
           this.appService.clinicalsummaryId = value;
-        } 
+        }
       });
-      
+
     }
 
   ngOnInit(): void {
@@ -90,7 +91,7 @@ export class ClinicalSummaryNotesComponent implements OnInit {
     setTimeout(() => {
       this.getClinicalSummaryNotesList();
     }, 1000);
-    
+
   }
 
   async getClinicalSummaryNotesList()
@@ -105,12 +106,12 @@ export class ClinicalSummaryNotesComponent implements OnInit {
         if(response == '[]')
         {
           // this.summaryNotes.clinicalsummarynotes_id = '';
-          this.clinicalSummaryNotes = '';
+          this.clinicalSummaryNotes = this.appService.appConfig.defaultClinicalSummaryNotes;
         }
         else{
           this.summaryNotes = JSON.parse(response)[0];
           this.clinicalSummaryNotes = JSON.parse(response)[0].notes;
-        }       
+        }
       })
     )
   }
@@ -151,7 +152,9 @@ export class ClinicalSummaryNotesComponent implements OnInit {
             this.globalService.clnicalSummaryChange.next(this.appService.clinicalsummaryId);
 
             this.globalService.resetObject();
-            
+
+            this.subjects.frameworkEvent.next("UPDATE_EWS");
+
           })
         )
     }
@@ -171,11 +174,11 @@ export class ClinicalSummaryNotesComponent implements OnInit {
       // await this.getSelectedFormWithContext();
       }
     // }
-    
+
   }
 
-  ngOnDestroy(): void {    
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-  }  
+  }
 
 }

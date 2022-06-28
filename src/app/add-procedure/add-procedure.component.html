@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2021  Interneuron CIC
+Copyright(C) 2022  Interneuron CIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
   
     <button class="btn btn-sm btn-default text-white"(click)="dismiss()">
       <!-- <span aria-hidden="true">&times;</span> -->
-      <img src="assets/images/clinicalsummary/closeIcon.svg">
+      <img src="assets/images/clinicalsummary/closeIcon.svg" height="18px">
     </button>
   </div>
   <div class="modal-body">
@@ -50,6 +50,15 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                 <!-- <div [hidden]="name.valid" class="text-danger">
                   <i>Please select procedure.</i>
                 </div> -->
+                <span class="text-secondary" *ngIf="procedure.name">
+                  <small class="float-right" style="float:right;font-style: italic; cursor: pointer; margin-top: 2px;"
+                    *ngIf="procedure.name" (click)="clearSelectedProcedure()">
+                    <i class="fa fa-times"></i>Clear
+                  </small>
+                </span>
+                <div class="alert alert-danger" role="alert" *ngIf="showAlert && procedure.name != null && procedure.name != ''" style="margin-top:20px;">
+                  This value is not codified and will not be recognized by decision support tools.
+                </div>
             </div>
 
             <div class="h6" *ngIf="procedureId">
@@ -71,7 +80,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       <div class="input-group">
                         <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker
                           [maxDate]="maxDateValue" id="proceduredate" name="proceduredate" [ngClass]="{ 'is-invalid': proceduredate.invalid }"
-                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true }" 
+                          [bsConfig]="{ dateInputFormat: 'DD-MMM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers:false }" 
                           aria-describedby="proceduredate" (keydown)="false" [(ngModel)]="procedure.proceduredate" #proceduredate="ngModel">
                       </div>
                       <div [hidden]="proceduredate.valid" class="text-danger">
@@ -141,15 +150,15 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                           <div class="input-group">
                             <!-- <input class="form-control"  type="text" name="performedby" [(ngModel)]="procedure.performedby"> -->
                             <p-autoComplete name="performedby" [suggestions]="assistants" autoCompleteValidation (completeMethod)="searchAssistant($event)" (onSelect)="selectedAssistant($event)" [multiple]="false"
-                              (onUnselect)="unSelectedAssistant($event)" [minLength]="1" [maxlength]="255" [(ngModel)]="procedure.performedby">
+                              (onUnselect)="unSelectedAssistant($event)" [minLength]="3" [maxlength]="255" [(ngModel)]="procedure.performedby">
                                     <ng-template let-assistants pTemplate="item">
                                         <div class="ui-helper-clearfix">
-                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.firstname }}</div>
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.displayname }}</div>
                                         </div>
                                     </ng-template>
                                     <ng-template let-assistants pTemplate="selectedItem">
                                         <div>
-                                            {{ assistants.firstname }}
+                                            {{ assistants.displayname }}
                                         </div>
                                     </ng-template>
                                 </p-autoComplete>
@@ -183,7 +192,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button class="btn btn-secondary text-white btn-block" 
+                          <button class="btn btn-light text-dark btn-block" 
                             (click)="dismiss()">
                             Cancel
                           </button>
@@ -191,12 +200,12 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <button *ngIf="!procedureId" class="btn btn-info text-white btn-block" 
+                          <button *ngIf="!procedureId" style="float:right;"class="btn btn-info text-white btn-block" 
                             [disabled]="!addProcedureForm.form.valid" (click)="addProcedure()">
                                 Save
                             </button>
 
-                            <button *ngIf="procedureId" class="btn btn-info text-white btn-block" 
+                            <button *ngIf="procedureId" style="float:right;" class="btn btn-info text-white btn-block" 
                             [disabled]="!addProcedureForm.form.valid" (click)="editProcedure()">
                                 Save
                             </button>

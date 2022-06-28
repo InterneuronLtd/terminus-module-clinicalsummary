@@ -22,4 +22,6 @@
   #printScreenBackButton {
     visibility: hidden;
   }
+
+  @page {size: landscape}
 }

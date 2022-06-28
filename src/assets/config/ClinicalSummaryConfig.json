@@ -4,9 +4,10 @@
       "carerecorduri":"CARERECORD_URI",
       "terminologyuri": "TERMINOLOGY_URI/api/Terminology/searchsnomed/VALUE",
       "fishbonedata":[
-        [ "WBC", "RBC", "PLATELET", "HB", "EOSINOPHIL", "BASOPHIL", "NEUTROPHIL", "MCV", "MCH" ],
-        [ "CALCIUM", "UREA", "SODIUM_Level", "POTASSIUM_LEVEL" ]
+        [ "WBC", "RBC", "PLATELET", "HB", "EOSINOPHIL", "BASOPHIL", "NEUTROPHIL", "MCV", "MCH", "HCT" ],
+        [ "EGFR", "SODIUM", "POTASSIUM", "CREATININE", "UREA"]
       ]
     },
-    "enablelogging": true
+    "enablelogging": true,
+    "defaultClinicalSummaryNotes": "<p><strong>Reason for admission:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Operation details:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Post-operative status:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Current Status:</strong><br><br data-cke-filler=\"true\"></p>"
  }

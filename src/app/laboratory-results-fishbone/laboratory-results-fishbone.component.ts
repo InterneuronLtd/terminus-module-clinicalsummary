@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
 import { StringMap } from '@angular/compiler/src/compiler_facade_interface';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+// import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';/
 import { Component, ElementRef, Input, ViewChild, OnInit, ViewChildren, QueryList, Renderer2} from '@angular/core';
 declare var ClinicalSummaryStyleKit: any;
 //import * as ClinicalSummaryStyleKit from 'src/assets/stylekit/ClinicalSummaryStyleKit.js';
