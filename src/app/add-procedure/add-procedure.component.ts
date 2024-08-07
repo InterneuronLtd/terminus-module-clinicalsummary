@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -399,6 +399,8 @@ selectedValue(event) {
 
           this.toasterService.showToaster('success','Procedure added successfully.');
           this.subjects.frameworkEvent.next("UPDATE_EWS");
+          //Update patient banner
+          this.subjects.frameworkEvent.next("UPDATE_HEIGHT_WEIGHT");
           console.log('Procedure added and saved');
           this.globalService.resetObject();
 

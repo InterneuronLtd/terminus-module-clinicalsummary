@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -64,6 +64,9 @@ import { DischargePlanHistoryViewerComponent } from './discharge-plan-history-vi
 import { InvestigationResultsNotesHistoryViewerComponent } from './investigation-results-notes-history-viewer/investigation-results-notes-history-viewer.component';
 import {TableModule} from 'primeng/table';
 import {DropdownModule} from 'primeng/dropdown';
+import { EditClinicalSummaryNotesComponent } from './edit-clinical-summary-notes/edit-clinical-summary-notes.component';
+import { EditInvestigationResultsNotesComponent } from './edit-investigation-results-notes/edit-investigation-results-notes.component';
+import { EditDischargePlanNotesComponent } from './edit-discharge-plan-notes/edit-discharge-plan-notes.component';
 
 @NgModule({
     declarations: [
@@ -89,7 +92,10 @@ import {DropdownModule} from 'primeng/dropdown';
         TaskHistoryViewerComponent,
         ClinicalSummaryNotesHistoryViewerComponent,
         DischargePlanHistoryViewerComponent,
-        InvestigationResultsNotesHistoryViewerComponent
+        InvestigationResultsNotesHistoryViewerComponent,
+        EditClinicalSummaryNotesComponent,
+        EditInvestigationResultsNotesComponent,
+        EditDischargePlanNotesComponent
     ],
     imports: [
         BrowserModule,
@@ -118,8 +124,8 @@ import {DropdownModule} from 'primeng/dropdown';
         BsDatepickerConfig,
         ConfirmationDialogService
     ],
-    //  bootstrap: [AppComponent],  //Comment out when running build command for packaging
-    bootstrap: [],
+     bootstrap: [],  //Comment out when running build command for packaging
+    // bootstrap: [],
     entryComponents: []
 })
 export class AppModule implements DoBootstrap {

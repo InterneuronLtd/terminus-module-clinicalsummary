@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Person } from '../models/entities/core-person.model';
 import { ApirequestService } from '../services/apirequest.service';
@@ -29,14 +29,15 @@ import { Guid } from 'guid-typescript';
 import { GlobalService } from '../services/global.service';
 import { ToasterService } from '../services/toaster-service.service';
 import { ClinicalSummaryNotesHistoryViewerService } from '../clinical-summary-notes-history-viewer/clinical-summary-notes-history-viewer.service';
-import * as ClassicEditor from 'src/assets/stylekit/ckeditor.js';
+import * as ClassicEditor from 'src/assets/cs-ckeditor/ckeditor.js';
+import { EditClinicalSummaryNotesService } from '../edit-clinical-summary-notes/edit-clinical-summary-notes.service';
 
 @Component({
   selector: 'app-clinical-summary-notes',
   templateUrl: './clinical-summary-notes.component.html',
   styleUrls: ['./clinical-summary-notes.component.css'],
 })
-export class ClinicalSummaryNotesComponent implements OnInit {
+export class ClinicalSummaryNotesComponent implements OnInit, AfterViewInit {
 
   subscriptions: Subscription = new Subscription();
   clinicalSummaryChange: Subscription = new Subscription();
@@ -45,6 +46,9 @@ export class ClinicalSummaryNotesComponent implements OnInit {
 
   getClinicalSummaryNotesURI: string;
   clinicalSummaryNotes: any = '';
+  clinicalSummaryNotesId: any = '';
+  createdBy: any = '';
+  createdTimestamp: any = '';
   personId: string;
   selectedClinicalSummaryView: string;
   refreshingList: boolean;
@@ -52,6 +56,9 @@ export class ClinicalSummaryNotesComponent implements OnInit {
   showCancelSaveButtons: boolean = false;
 
   postClinicalSummaryNotesURI: string = this.appService.carerecorduri + "/ClinicalSummary/PostClinicalSummaryNotes/";
+
+  isNoteReadOnly: boolean = true;
+  canLoadNote: boolean = false;
 
   @Input() set personData(value: Person) {
     this.personId = value.person_id;
@@ -66,7 +73,8 @@ export class ClinicalSummaryNotesComponent implements OnInit {
     public globalService: GlobalService,
     private toasterService: ToasterService,
     private subjects: SubjectsService,
-    public clinicalSummaryNotesHistoryViewerService: ClinicalSummaryNotesHistoryViewerService) {
+    public clinicalSummaryNotesHistoryViewerService: ClinicalSummaryNotesHistoryViewerService,
+    public editClinicalSummaryNotesService: EditClinicalSummaryNotesService) {
       this.clinicalSummaryChange = this.globalService.clnicalSummaryChange.subscribe(value => {
         if(value)
         {
@@ -74,9 +82,20 @@ export class ClinicalSummaryNotesComponent implements OnInit {
         }
       });
 
+      this.subjects.rbacRefChange.subscribe(()=>{
+        this.isNoteReadOnly = !this.appService.AuthoriseAction('Edit Clinical Summary');
+        this.canLoadNote = true;
+      });
     }
 
   ngOnInit(): void {
+    this.subjects.clinicalSummaryNotesChange.subscribe( (clinicalsummary) => {
+      // console.log('notes',clinicalsummary['_createdtimestamp']);
+      this.clinicalSummaryNotes = clinicalsummary['notes'];
+      this.createdBy =  clinicalsummary['_createdby'];
+      this.createdTimestamp =  clinicalsummary['_createdtimestamp'];
+      this.clinicalSummaryNotesId = clinicalsummary['clinicalsummarynotes_id']
+    })
     // this.clinicalSummaryChange = this.globalService.clnicalSummaryChange.subscribe(value => {
     //   if(!this.appService.clinicalsummaryId) {
     //     return;
@@ -84,6 +103,14 @@ export class ClinicalSummaryNotesComponent implements OnInit {
     //   this.appService.clinicalsummaryId = value;
     // })
     // console.log('this.appService.clinicalsummaryId',this.appService.clinicalsummaryId);
+  }
+
+  ngAfterViewInit(): void {
+    //safe to check after view init
+    if(this.appService && this.appService.rbacDataReceived) {
+      this.isNoteReadOnly = !this.appService.AuthoriseAction('Edit Clinical Summary');
+      this.canLoadNote = true;
+    }
   }
 
   async initialiseFunctions()
@@ -111,6 +138,8 @@ export class ClinicalSummaryNotesComponent implements OnInit {
         else{
           this.summaryNotes = JSON.parse(response)[0];
           this.clinicalSummaryNotes = JSON.parse(response)[0].notes;
+          this.createdBy = JSON.parse(response)[0]._createdby;
+          this.createdTimestamp = JSON.parse(response)[0]._createdtimestamp;
         }
       })
     )
@@ -163,8 +192,9 @@ export class ClinicalSummaryNotesComponent implements OnInit {
   async viewHistory() {
     // if(this.summaryNotes.clinicalsummarynotes_id)
     // {
+      let clinicalSummaryNotesID = (this.summaryNotes.clinicalsummarynotes_id != undefined) ? this.summaryNotes.clinicalsummarynotes_id : this.clinicalSummaryNotesId;
       var response = false;
-      await this.clinicalSummaryNotesHistoryViewerService.confirm(this.summaryNotes.clinicalsummarynotes_id, 'Clinical Summary Notes History','','Import')
+      await this.clinicalSummaryNotesHistoryViewerService.confirm(((clinicalSummaryNotesID == '') ? undefined : clinicalSummaryNotesID), 'Clinical Summary Notes History','','Import')
       .then((confirmed) => response = confirmed)
       .catch(() => response = false);
       if(!response) {
@@ -175,6 +205,21 @@ export class ClinicalSummaryNotesComponent implements OnInit {
       }
     // }
 
+  }
+
+  async openEditClinicalSummaryDialog()
+  {
+    var response = false;
+    await this.editClinicalSummaryNotesService.confirm(this.summaryNotes.clinicalsummarynotes_id, 'Clinical Summary Notes History','','Import')
+    .then((confirmed) => response = confirmed)
+    .catch(() => response = false);
+    if(!response) {
+      return;
+    }
+    else {
+    // await this.getSelectedFormWithContext();
+    }
+    // }
   }
 
   ngOnDestroy(): void {

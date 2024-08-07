@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Person } from '../models/entities/core-person.model';
 import { ApirequestService } from '../services/apirequest.service';
@@ -29,14 +29,15 @@ import { GlobalService } from '../services/global.service';
 import { ToasterService } from '../services/toaster-service.service';
 import { SubjectsService } from '../services/subjects.service';
 import { DischargePlanHistoryViewerService } from '../discharge-plan-history-viewer/discharge-plan-history-viewer.service';
-import * as ClassicEditor from 'src/assets/stylekit/ckeditor.js';
+import * as ClassicEditor from 'src/assets/cs-ckeditor/ckeditor.js';
+import { EditDischargePlanNotesService } from '../edit-discharge-plan-notes/edit-discharge-plan-notes.service';
 
 @Component({
   selector: 'app-discharge-plan',
   templateUrl: './discharge-plan.component.html',
   styleUrls: ['./discharge-plan.component.css'],
 })
-export class DischargePlanComponent implements OnInit {
+export class DischargePlanComponent implements OnInit, AfterViewInit {
 
   subscriptions: Subscription = new Subscription();
   clinicalSummaryChange: Subscription = new Subscription();
@@ -51,11 +52,17 @@ export class DischargePlanComponent implements OnInit {
   getDischargePlanURI: string;
   dischargePlan: any;
   dischargePlanNotes: any = '';
+  createdBy: any = '';
+  createdTimestamp: any = '';
+  dischargePlanId: any = '';
   personId: string;
 
   showCancelSaveButtons: boolean = false;
 
   postDischargePlanNotesURI: string = this.appService.carerecorduri + "/ClinicalSummary/PostDischargePlan/";
+
+  isNoteReadOnly: boolean = false;
+  canLoadNote: boolean = false;
 
   @Input() set personData(value: Person) {
 
@@ -74,7 +81,8 @@ export class DischargePlanComponent implements OnInit {
     public globalService: GlobalService,
     private toasterService: ToasterService,
     private subjects: SubjectsService,
-    public dischargePlanHistoryViewerService: DischargePlanHistoryViewerService) {
+    public dischargePlanHistoryViewerService: DischargePlanHistoryViewerService,
+    public editDischargePlanNotesService: EditDischargePlanNotesService) {
       this.subjects.encounterChange.subscribe( () => {
         if(!this.appService.encounterId) {
         return;
@@ -87,9 +95,30 @@ export class DischargePlanComponent implements OnInit {
           this.appService.clinicalsummaryId = value;
         }
       });
+
+      this.subjects.rbacRefChange.subscribe(()=>{
+        this.isNoteReadOnly = !this.appService.AuthoriseAction('Edit Clinical Summary');
+        this.canLoadNote = true;
+      });
+
+      this.subjects.dischargePlanNotesChange.subscribe( (dischargeplan) => {
+        // console.log('dischargeplan',dischargeplan);
+        this.dischargePlanNotes = dischargeplan['dischargeplannotes'];
+        this.createdBy = dischargeplan['_createdby'];
+        this.createdTimestamp = dischargeplan['_createdtimestamp'];
+        this.dischargePlanId = dischargeplan['dischargeplan_id'];
+      })
     }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    //safe to check after view init
+    if(this.appService && this.appService.rbacDataReceived) {
+      this.isNoteReadOnly = !this.appService.AuthoriseAction('Edit Clinical Summary');
+      this.canLoadNote = true;
+    }
   }
 
   async initialiseFunctions()
@@ -114,6 +143,8 @@ export class DischargePlanComponent implements OnInit {
         else{
           this.dischargePlan = JSON.parse(response)[0];
           this.dischargePlanNotes = JSON.parse(response)[0].dischargeplannotes;
+          this.createdBy = JSON.parse(response)[0]._createdby;
+          this.createdTimestamp = JSON.parse(response)[0]._createdtimestamp;
 
           this.refreshingList = false;
         }
@@ -167,8 +198,9 @@ export class DischargePlanComponent implements OnInit {
   async viewHistory() {
     // if(this.dischargePlan.dischargeplan_id)
     // {
+      let dischargeID = (this.dischargePlan.dischargeplan_id) ? this.dischargePlan.dischargeplan_id : this.dischargePlanId;
       var response = false;
-      await this.dischargePlanHistoryViewerService.confirm(this.dischargePlan.dischargeplan_id, 'Discharge Plan History','','Import')
+      await this.dischargePlanHistoryViewerService.confirm(((dischargeID == '') ? undefined : dischargeID), 'Discharge Plan History','','Import')
       .then((confirmed) => response = confirmed)
       .catch(() => response = false);
       if(!response) {
@@ -179,6 +211,20 @@ export class DischargePlanComponent implements OnInit {
       }
     // }
 
+  }
+
+  async openEditDischargePlanDialog()
+  {
+    var response = false;
+    await this.editDischargePlanNotesService.confirm(this.dischargePlan.dischargeplan_id, 'Edit Dischrage Plan Notes','','Import')
+    .then((confirmed) => response = confirmed)
+    .catch(() => response = false);
+    if(!response) {
+      return;
+    }
+    else {
+    // await this.getSelectedFormWithContext();
+    }
   }
 
   ngOnDestroy(): void {

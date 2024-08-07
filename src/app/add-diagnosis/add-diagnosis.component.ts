@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -79,6 +79,7 @@ export class AddDiagnosisComponent implements OnInit {
   showDatePicker: boolean = false;
 
   subscriptions: Subscription = new Subscription();
+  isLoading: boolean = false;
 
   @Input() title: string;
   @Input() message: string;
@@ -124,11 +125,11 @@ export class AddDiagnosisComponent implements OnInit {
       this.diagnosis.person_id = this.appService.personId;
       this.diagnosis.encounter_id = this.appService.encounterId;
 
-      this.diagnosis.clinicalstatus = "";
+      this.diagnosis.clinicalstatus = "ACTIVE";
 
-      this.diagnosis.onsetdate = this.globalService.getDate();
+      this.diagnosis.onsetdate = null;
 
-      this.diagnosis.verificationstatus = "";
+      this.diagnosis.verificationstatus = "CONFIRMED";
 
       this.diagnosis.reportedby = this.appService.currentPersonName;
 
@@ -355,7 +356,7 @@ selectedValue(diag: SNOMED) {
 
   async addDiagnosis()
   {
-
+    this.isLoading = true;
     let diagnosis = {
       diagnosis_id: String(Guid.create()),
       person_id: this.appService.personId,
@@ -382,8 +383,11 @@ selectedValue(diag: SNOMED) {
 
           this.toasterService.showToaster('success','Diagnosis added successfully.');
           this.subjects.frameworkEvent.next("UPDATE_EWS");
+          //Update patient banner
+          this.subjects.frameworkEvent.next("UPDATE_HEIGHT_WEIGHT");
           console.log('Diagnosis added and saved');
           this.globalService.resetObject();
+          this.isLoading = false;
         })
       )
       this.globalService.listDiagnosisChange.next(null);
@@ -391,7 +395,7 @@ selectedValue(diag: SNOMED) {
 
   editDiagnosis()
   {
-
+    this.isLoading = true;
     let editDiagnosis = {
       diagnosis_id: this.diagnosisId,
       person_id: this.appService.personId,
@@ -421,6 +425,7 @@ selectedValue(diag: SNOMED) {
           this.subjects.frameworkEvent.next("UPDATE_EWS");
           console.log('Diagnosis edited and saved');
           this.globalService.resetObject();
+          this.isLoading = false;
         })
       )
       this.globalService.listDiagnosisChange.next(null);

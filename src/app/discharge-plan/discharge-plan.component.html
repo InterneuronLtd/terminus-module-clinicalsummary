@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2023  Interneuron Holdings Ltd
+Copyright(C) 2024  Interneuron Holdings Ltd
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,22 +25,33 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
         Discharge Plan
       </h3>
     </div>
-    <div class="col-2" style="text-align: right;padding-top: 8px;">
+    <div class="col-1" style="text-align: right;padding-top: 8px;">
       <img src="assets/images/clinicalsummary/history.svg" height="18px" style="float:right;margin-right:8px"
         (click)="viewHistory()">
     </div>
+    <div class="col-1" style="text-align: right; padding-top: 8px;">
+      <img src="assets/images/clinicalsummary/editIcon.svg" height="18px" style="float:right;margin-right:8px"
+      (click)="openEditDischargePlanDialog()">
+    </div>
   </div>
-  <ckeditor id="classic-editor" [editor]="Editor" [(ngModel)]="dischargePlanNotes" (keyup)="showButtons()"
-    (focusout)="saveDischargePlan()" [disabled]="!appService.AuthoriseAction('Edit Clinical Summary')"></ckeditor>
+  <ng-container *ngIf="canLoadNote">
+    <!-- <ckeditor id="classic-editor" [editor]="Editor" [(ngModel)]="dischargePlanNotes"
+      [disabled]="true">
+    </ckeditor> -->
+    <div [innerHTML]="dischargePlanNotes" style="word-wrap: break-word; height:300px !important; overflow: scroll" class="border"
+    (click)="openEditDischargePlanDialog()">
+
+    </div>
+  </ng-container>
   <div *ngIf="!showCancelSaveButtons" style="font-size: 0.8em;font-style: italic;text-align: right; height: 60px;"
     class="text-secondary">
-    {{dischargePlan?._createdby}}
-    {{dischargePlan?._createdtimestamp | date : 'dd-MM-yyyy'}}
+    {{createdBy}}
+    {{createdTimestamp | date : 'dd-MM-yyyy'}}
   </div>
-  <div class="container" *ngIf="showCancelSaveButtons"
+  <!-- <div class="container" *ngIf="showCancelSaveButtons"
     style="height:60px; font-size: 0.8em;text-align: right; padding: 10px; background-color: #f8f9fa; border: 1px solid #e6e6e6; margin-top: 3px;">
     <button type="button" class="btn btn-light" style="float: left;" (click)="dismiss()">Cancel</button>&nbsp;
     <button type="button" class="btn btn-info text-white" style="float: right;"
       (click)="saveDischargePlan()">Save</button>
-  </div>
+  </div> -->
 </div>

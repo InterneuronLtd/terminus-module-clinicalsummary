@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -178,6 +178,8 @@ export class AppComponent implements OnDestroy{
         this.appService.enableLogging = this.appService.appConfig.enablelogging;
         this.appService.terminologyURI = this.appService.appConfig.uris.terminologyuri;
         this.appService.fishbonedata = this.appService.appConfig.uris.fishbonedata;
+        this.appService.environment = this.appService.appConfig.environment;
+        this.appService.showAllComponentsAlongWithDiagnosis = this.appService.appConfig.showAllComponentsAlongWithDiagnosis;
         // this.appService.buffertimeAmber = this.appService.appConfig.bufferTime.buffertimeAmber;
         // this.appService.bufferAdministered = this.appService.appConfig.bufferTime.bufferAdministered;
         // this.appService.pleaseResupplyStockValidation = this.appService.appConfig.pleaseResupplyStockValidation;
@@ -203,6 +205,9 @@ export class AppComponent implements OnDestroy{
                 //  console.log(this.appService.roleActions);
                 //  this.appService.logToConsole(response);
                 // this.checkLockedOrBlocked();
+                console.log('Received RBAC from API');
+                this.appService.rbacDataReceived = true;
+                this.subjects.rbacRefChange.next();
               })
           );
 

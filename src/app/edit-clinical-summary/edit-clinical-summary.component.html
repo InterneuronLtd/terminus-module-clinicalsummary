@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2023  Interneuron Holdings Ltd
+Copyright(C) 2024  Interneuron Holdings Ltd
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,42 +19,43 @@ You should have received a copy of the GNU General Public License
 along with this program.If not, see<http://www.gnu.org/licenses/>. -->
 <!--END LICENSE BLOCK--> 
 <div *ngIf="selectedSummaryView === 'edit clinical summary'">
-
-  <div class="row">
-    <div class="col-md-4">
-      <app-clinical-summary-notes [personData]="personData"></app-clinical-summary-notes>
+  <div *ngIf="appService.environment == 'hospital' && appService.showAllComponentsAlongWithDiagnosis">
+    <div class="row">
+      <div class="col-md-4">
+        <app-clinical-summary-notes [personData]="personData"></app-clinical-summary-notes>
+      </div>
+      <div class="col-md-4">
+        <app-investigation-results-notes [personData]="personData"></app-investigation-results-notes>
+      </div>
+      <div class="col-md-4">
+        <app-discharge-plan [personData]="personData"></app-discharge-plan>
+      </div>
     </div>
-    <div class="col-md-4">
-      <app-investigation-results-notes [personData]="personData"></app-investigation-results-notes>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <app-recent-laboratory-results [personData]="personData"></app-recent-laboratory-results><br>
+      </div>
     </div>
-    <div class="col-md-4">
-      <app-discharge-plan [personData]="personData"></app-discharge-plan>
+
+    <div class="row">
+      <div class="col-md-12">
+        <app-infection-control [personData]="personData"></app-infection-control>
+      </div>
     </div>
-  </div>
 
-
-  <div class="row">
-    <div class="col-md-12">
-      <app-recent-laboratory-results [personData]="personData"></app-recent-laboratory-results><br>
+    <div class="row">
+      <div class="col-md-12">
+        <app-list-task [personData]="personData"></app-list-task>
+      </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <app-infection-control [personData]="personData"></app-infection-control>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <app-list-task [personData]="personData"></app-list-task>
-    </div>
-  </div>
 
 
-  <div class="row">
-    <div class="col-md-12">
-      <app-list-procedure [personData]="personData"></app-list-procedure>
+    <div class="row">
+      <div class="col-md-12">
+        <app-list-procedure [personData]="personData"></app-list-procedure>
+      </div>
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ export class ListDiagnosisComponent implements OnInit {
   contextData: any;
   personId: string;
   clinicalStatusList: any;
+  loader: boolean = true;
 
   getClinicalStatusListURI: string = this.appService.carerecorduri + '/ClinicalSummary/GetClinicalSummaryStatuses/ClinicalStatus';
 
@@ -146,10 +147,10 @@ export class ListDiagnosisComponent implements OnInit {
         if(response.length > 0)
         {
           this.diagnosisList = JSON.parse(response);
-
+          
           this.refreshingList = false;
         }
-        
+        this.loader = false;
       })
     )
   }

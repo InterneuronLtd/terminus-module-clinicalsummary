@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2023  Interneuron Holdings Ltd
+Copyright(C) 2024  Interneuron Holdings Ltd
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
     </div>
     <div class="col-2" style="text-align: right;">
       <button class="btn btn-sm btn-default text-white" (click)="addDiagnosis()"  *ngIf="appService.AuthoriseAction('Edit Clinical Summary')">
-        <img src="assets/images/clinicalsummary/addicon.svg" height="18px">
+        <img src="assets/images/clinicalsummary/addicon.svg" height="25px">
       </button>
     </div>
   </div>
@@ -70,7 +70,10 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr>
+      <tr *ngIf="loader">
+        <td colspan="7"><div class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></div></td>
+      </tr>
+      <tr *ngIf="!loader">
           <td colspan="7">No data available.</td>
       </tr>
     </ng-template>

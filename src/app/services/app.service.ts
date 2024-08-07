@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Holdings Ltd
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ export class AppService {
   public events: any = [];
   public VtmUnits: any[];
   public fishbonedata: any;
+  public environment: string;
 
   public openAdditionalAdministration: boolean = false;
 
@@ -80,6 +81,8 @@ export class AppService {
   public displayWarnings: boolean = true;
 
   public gender: string;
+  public rbacDataReceived: boolean = false;
+  public showAllComponentsAlongWithDiagnosis: boolean = false;
   reset(): void {
     this.personId = null;
     this.clinicalsummaryId = null;
@@ -98,6 +101,7 @@ export class AppService {
     this.currentEWSScale = null;
     this.baseURI = null;
     this.fishbonedata = null;
+    this.environment = null;
 
     this.isWeightCaptured = false;
     this.isHeightCaptured = false;
@@ -125,6 +129,7 @@ export class AppService {
     this.currentPersonName = null;
     this.buffertimeAmber = null;
     this.displayWarnings = true;
+    this.rbacDataReceived = false;
   }
 
   decodeAccessToken(token: string): any {
@@ -139,7 +144,9 @@ export class AppService {
 
 
   public AuthoriseAction(action: string): boolean {
-    return this.roleActions.filter(x => x.actionname.toLowerCase().trim() == action.toLowerCase()).length > 0;
+    if(!this.roleActions) return false;
+    let matchingRoles = this.roleActions.filter(x => x.actionname.toLowerCase().trim() == action.toLowerCase());
+    return matchingRoles && matchingRoles.length > 0;
   }
 
   public getDateTimeinISOFormat(date: Date): string {

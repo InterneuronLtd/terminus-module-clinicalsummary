@@ -9,5 +9,7 @@
       ]
     },
     "enablelogging": true,
-    "defaultClinicalSummaryNotes": "<p><strong>Reason for admission:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Operation details:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Post-operative status:</strong><br><br data-cke-filler=\"true\"></p><p><strong>Current Status:</strong><br><br data-cke-filler=\"true\"></p>"
+    "defaultClinicalSummaryNotes": "",
+    "environment": "hospital",
+    "showAllComponentsAlongWithDiagnosis": false
  }

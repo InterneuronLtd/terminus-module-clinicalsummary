@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2023  Interneuron Holdings Ltd
+Copyright(C) 2024  Interneuron Holdings Ltd
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                       
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" *ngIf="diagnosis.clinicalstatus == 'RESOLVED'">
                       <label for="onsetdate">Resolved Date:</label>
                       <div class="input-group">
                         <input class="form-control" type="text" style="width:8em;" placeholder="DD/MM/YYYY" bsDatepicker [maxDate]="maxDateValue"
@@ -217,12 +217,20 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                         <div class="form-group">
                           <button *ngIf="!diagnosisId" style="float:right;" class="btn btn-info text-white btn-block" 
                             [disabled]="!addDiagnosisForm.form.valid" (click)="addDiagnosis()">
-                                Save
+                                <span *ngIf="!isLoading">Save</span>
+                                <span *ngIf="isLoading">
+                                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                  Saving...
+                                </span>
                             </button>
 
                             <button *ngIf="diagnosisId" style="float:right;" class="btn btn-info text-white btn-block" 
                             [disabled]="!addDiagnosisForm.form.valid" (click)="editDiagnosis()">
-                                Save
+                              <span *ngIf="!isLoading">Save</span>
+                              <span *ngIf="isLoading">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
+                              </span>
                             </button>
                         </div>
                       </div>
