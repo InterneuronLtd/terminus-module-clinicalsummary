@@ -34,6 +34,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. */
 
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 
 @Injectable({
@@ -64,9 +65,9 @@ export class AuthenticationService {
     let headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-    await this.httpClient.post("SYNAPSE_IDENTITY_URI/connect/token", "grant_type=client_credentials&client_id=client&client_secret=secret&scope=dynamicapi.read terminologyapi.read terminologyapi.write carerecordapi.read carerecordapi.write",
-      { headers: headers })
-      .toPromise().then((resp: any) => {
+    await firstValueFrom(this.httpClient.post("SYNAPSE_IDENTITY_URI/connect/token", "grant_type=client_credentials&client_id=client&client_secret=secret&scope=dynamicapi.read terminologyapi.read terminologyapi.write carerecordapi.read carerecordapi.write",
+      { headers: headers }))
+      .then((resp: any) => {
 
         this.token = resp.access_token;
         let currentDateTime = new Date();

@@ -56,7 +56,7 @@ export class FakeDataContractComponent implements OnInit, OnDestroy {
   contextData: any;
   appContexts: string;
 
-  dtOptions: DataTables.Settings = {};
+  dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject<any>();
 
   showManualContext: boolean = false;
@@ -127,7 +127,7 @@ export class FakeDataContractComponent implements OnInit, OnDestroy {
                     var data = JSON.parse(response);
                     //console.log(data);
                     this.persons = data;
-                    this.dtTrigger.next();
+                    this.dtTrigger.next(undefined);
                     this.spinner.hide("spinner2");
                   })
               );
@@ -177,9 +177,9 @@ export class FakeDataContractComponent implements OnInit, OnDestroy {
 
     this.appService.personId = this.personId;
     this.appService.encounterId = this.encounterId;
-    this.subjects.apiServiceReferenceChange.next();
-    this.subjects.personIdChange.next();
-    this.subjects.encounterChange.next();
+    this.subjects.apiServiceReferenceChange.next(undefined);
+    this.subjects.personIdChange.next(undefined);
+    this.subjects.encounterChange.next(undefined);
   }
 
   toggleContextView() {

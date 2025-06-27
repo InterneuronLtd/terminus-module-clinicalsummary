@@ -20,7 +20,7 @@
 //END LICENSE BLOCK 
 import { Injectable } from '@angular/core';
 import { Encounter } from '../models/encounter.model';
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { action } from '../models/filter.model';
 import * as moment from 'moment';
 import { SubjectsService } from './subjects.service';
@@ -134,7 +134,7 @@ export class AppService {
 
   decodeAccessToken(token: string): any {
     try {
-      return jwt_decode(token);
+      return jwtDecode(token);
     }
     catch (Error) {
       this.logToConsole(`Error: ${Error}`);

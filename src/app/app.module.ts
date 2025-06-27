@@ -20,7 +20,7 @@
 //END LICENSE BLOCK 
 import { NgModule, Injector, DoBootstrap, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DataTablesModule } from "angular-datatables";
 import { AppComponent } from './app.component';
 import { CommonModule } from "@angular/common";
@@ -68,8 +68,7 @@ import { EditClinicalSummaryNotesComponent } from './edit-clinical-summary-notes
 import { EditInvestigationResultsNotesComponent } from './edit-investigation-results-notes/edit-investigation-results-notes.component';
 import { EditDischargePlanNotesComponent } from './edit-discharge-plan-notes/edit-discharge-plan-notes.component';
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         ViewerComponent,
         FakeDataContractComponent,
@@ -97,9 +96,8 @@ import { EditDischargePlanNotesComponent } from './edit-discharge-plan-notes/edi
         EditInvestigationResultsNotesComponent,
         EditDischargePlanNotesComponent
     ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [], imports: [BrowserModule,
         DataTablesModule,
         FormsModule,
         NgxSpinnerModule,
@@ -115,19 +113,13 @@ import { EditDischargePlanNotesComponent } from './edit-discharge-plan-notes/edi
             preventDuplicates: true,
         }),
         TableModule,
-        DropdownModule
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    providers: [
+        DropdownModule], providers: [
         BsModalRef,
         BsModalService,
         BsDatepickerConfig,
-        ConfirmationDialogService
-    ],
-     bootstrap: [],  //Comment out when running build command for packaging
-    // bootstrap: [],
-    entryComponents: []
-})
+        ConfirmationDialogService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {
 

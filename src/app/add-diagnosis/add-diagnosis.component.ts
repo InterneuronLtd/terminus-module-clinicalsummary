@@ -260,29 +260,29 @@ export class AddDiagnosisComponent implements OnInit {
 
 }
 
-selectedValue(diag: SNOMED) {
+selectedValue(diag) {
 
     if(diag) {
       this.showDiagnosisForm = true;
     }
     let addedProcs = [];
 
-        if (diag.code == this.otherConcept.conceptcode) {
+        if (diag.value._code == this.otherConcept.conceptcode) {
             addedProcs = this.clinicalSummaryDiagnosis.filter(x =>
-                (x.diagnosistext.toLowerCase().replace(/ /g, '') == diag.term.toLowerCase().replace(/ /g, '')));
+                (x.diagnosistext.toLowerCase().replace(/ /g, '') == diag.value._term.toLowerCase().replace(/ /g, '')));
         }
         else {
-            addedProcs = this.clinicalSummaryDiagnosis.filter(x => x.diagnosiscode == diag.code);
+            addedProcs = this.clinicalSummaryDiagnosis.filter(x => x.diagnosiscode == diag.value._code);
         }
 
         if (addedProcs.length == 0) {
             let diagnosis: CoreDiagnosis = new CoreDiagnosis();
-            diagnosis.diagnosis_id = diag.code + '|' + this.clinicalsummary_id,
+            diagnosis.diagnosis_id = diag.value._code + '|' + this.clinicalsummary_id,
                 diagnosis.operation_id = this.clinicalsummary_id,
                 diagnosis.statuscode = 'Active',
                 diagnosis.statustext = 'Active',
-                diagnosis.diagnosiscode = diag.code,
-                diagnosis.diagnosistext = diag.term
+                diagnosis.diagnosiscode = diag.value._code,
+                diagnosis.diagnosistext = diag.value._term
 
             this.clinicalSummaryDiagnosis[0] = diagnosis;
         }

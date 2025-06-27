@@ -43,7 +43,7 @@ export class ListTaskComponent implements OnInit {
   subscriptions: Subscription = new Subscription();
   clinicalSummaryChange : Subscription = new Subscription();
 
-  dtOptions: DataTables.Settings = {};
+  dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();  
 
   clinicalSummaryList: any;

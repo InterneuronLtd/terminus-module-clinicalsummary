@@ -31,6 +31,7 @@ import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-d
 import { HistoryViewerService } from '../history-viewer/history-viewer.service';
 import { Procedure } from '../models/entities/procedure.model';
 import { DataTableDirective } from 'angular-datatables';
+import { Api } from 'datatables.net';
 
 @Component({
   selector: 'app-list-procedure',
@@ -42,7 +43,7 @@ export class ListProcedureComponent implements OnInit {
   tempProcedure: Subscription = new Subscription();
   subscriptions: Subscription = new Subscription();
 
-  dtOptions: DataTables.Settings = {};
+  dtOptions: any = {};
   // dtTrigger: Subject<any> = new Subject();
 
   clinicalSummaryList: any;
@@ -220,7 +221,7 @@ export class ListProcedureComponent implements OnInit {
 
   selectChange(e,coloumn)
   {
-    this.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => {
+    this.datatableElement.dtInstance.then((dtInstance: Api<any>) => {
          dtInstance.column(coloumn).search(e.target.value).draw();
     });
   }

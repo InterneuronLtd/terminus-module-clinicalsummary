@@ -207,7 +207,7 @@ export class AppComponent implements OnDestroy{
                 // this.checkLockedOrBlocked();
                 console.log('Received RBAC from API');
                 this.appService.rbacDataReceived = true;
-                this.subjects.rbacRefChange.next();
+                this.subjects.rbacRefChange.next(undefined);
               })
           );
 
@@ -217,9 +217,9 @@ export class AppComponent implements OnDestroy{
 
             //emit events after getting initial config. //this happens on first load only.
             this.appService.logToConsole("Service reference is being published from init config");
-            this.subjects.apiServiceReferenceChange.next();
+            this.subjects.apiServiceReferenceChange.next(undefined);
             this.appService.logToConsole("personid is being published from init config");
-            this.subjects.personIdChange.next();
+            this.subjects.personIdChange.next(undefined);
 
           }));
 

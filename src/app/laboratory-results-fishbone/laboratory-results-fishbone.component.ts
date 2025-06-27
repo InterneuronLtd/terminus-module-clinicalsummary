@@ -18,7 +18,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-import { StringMap } from '@angular/compiler/src/compiler_facade_interface';
+// import { StringMap } from '@angular/compiler/src/compiler_facade_interface';
 // import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';/
 import { Component, ElementRef, Input, ViewChild, OnInit, ViewChildren, QueryList, Renderer2} from '@angular/core';
 declare var ClinicalSummaryStyleKit: any;

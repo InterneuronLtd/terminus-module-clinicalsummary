@@ -47,7 +47,7 @@ export class EditClinicalSummaryComponent implements OnInit {
 
   subscriptions: Subscription = new Subscription();
 
-  dtOptions: DataTables.Settings = {};
+  dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
 
   public Editor = ClassicEditor;
@@ -134,7 +134,7 @@ export class EditClinicalSummaryComponent implements OnInit {
       dom: "-f -t -p",
     };
 
-    this.dtTrigger.next();
+    this.dtTrigger.next(undefined);
   }
 
   animate(): void {}
@@ -145,7 +145,7 @@ export class EditClinicalSummaryComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.dtTrigger.next();
+    this.dtTrigger.next(undefined);
   }
 
   showClinicalSummaryList()

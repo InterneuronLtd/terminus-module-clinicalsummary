@@ -31,6 +31,7 @@ import { AddDiagnosisService } from '../add-diagnosis/add-diagnosis.service';
 import { DiagnosisHistoryViewerService } from '../diagnosis-history-viewer/diagnosis-history-viewer.service';
 import { DataTableDirective } from 'angular-datatables';
 import { MessageService } from "primeng/api";
+import { Api } from 'datatables.net';
 
 @Component({
   selector: 'app-list-diagnosis',
@@ -44,7 +45,7 @@ export class ListDiagnosisComponent implements OnInit {
   tempDiagnosis: Subscription = new Subscription();
   listDiagnosisUpdate: Subscription = new Subscription();
 
-  dtOptions: DataTables.Settings = {};
+  dtOptions: any = {};
   // dtTrigger: Subject<any> = new Subject();  
 
   clinicalSummaryList: any;
@@ -234,7 +235,7 @@ export class ListDiagnosisComponent implements OnInit {
 
   selectChange(e,coloumn)
   {
-    this.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => {
+    this.datatableElement.dtInstance.then((dtInstance: Api<any>): void => {
          dtInstance.column(coloumn).search(e.target.value).draw();
     });
   }

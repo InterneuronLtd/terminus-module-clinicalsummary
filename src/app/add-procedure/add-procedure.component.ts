@@ -267,21 +267,21 @@ selectedValue(event) {
     }
     let addedProcs = [];
 
-        if (event.code == this.otherConcept.conceptcode) {
+        if (event.value._code == this.otherConcept.conceptcode) {
             addedProcs = this.clinicalSummaryProcedures.filter(x =>
-                (x.name.toLowerCase().replace(/ /g, '') == event.term.toLowerCase().replace(/ /g, '')));
+                (x.name.toLowerCase().replace(/ /g, '') == event.value._term.toLowerCase().replace(/ /g, '')));
         }
         else {
-            addedProcs = this.clinicalSummaryProcedures.filter(x => x.code == event.code);
+            addedProcs = this.clinicalSummaryProcedures.filter(x => x.code == event.value._code);
         }
 
         if (addedProcs.length == 0) {
             let procedure: CoreProcedure = new CoreProcedure();
 
-            procedure.procedure_id = event.code + '|' + this.clinicalsummary_id;
+            procedure.procedure_id = event.value._code + '|' + this.clinicalsummary_id;
             procedure.operation_id = this.clinicalsummary_id;
-            procedure.code = event.code;
-            procedure.name = event.term;
+            procedure.code = event.value._code;
+            procedure.name = event.value._term;
 
             this.clinicalSummaryProcedures[0] = procedure ;
         }

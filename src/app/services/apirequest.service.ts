@@ -36,7 +36,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 import { AppService } from './app.service';
-import { Observable, from } from 'rxjs';
+import { Observable, firstValueFrom, from } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -79,8 +79,7 @@ export class ApirequestService {
       'Authorization': 'Bearer ' + token
     });
 
-    return this.httpClient.get(uri, { headers: headers })
-      .toPromise()
+    return firstValueFrom(this.httpClient.get(uri, { headers: headers }))
       .catch((result: HttpErrorResponse) => {
         if (result.status === 401) {
 
@@ -96,8 +95,7 @@ export class ApirequestService {
       'Authorization': 'Bearer ' + token
     });
 
-    return this.httpClient.post(uri, body, { headers: headers })
-      .toPromise()
+    return firstValueFrom(this.httpClient.post(uri, body, { headers: headers }))
       .catch((result: HttpErrorResponse) => {
         this.appService.logToConsole(result
         );
@@ -114,8 +112,7 @@ export class ApirequestService {
       'Authorization': 'Bearer ' + token
     });
 
-    return this.httpClient.delete(uri, { headers: headers })
-      .toPromise()
+    return firstValueFrom(this.httpClient.delete(uri, { headers: headers }))
       .catch((result: HttpErrorResponse) => {
         if (result.status === 401) {
 
